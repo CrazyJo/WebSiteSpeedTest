@@ -1,54 +1,99 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AILib;
+using static System.Threading.Tasks.Parallel;
 
 namespace UtilitiesPackage
 {
     public class LoadTimeManager : ILoadTimeManager
     {
-        public IDictionary<string, TimeSpan> LoadTimeMeasuringWithSitemap(string url)
+        private readonly HttpClient _httpClient;
+
+        public LoadTimeManager()
         {
-            Dictionary<string, TimeSpan> results = new Dictionary<string, TimeSpan>();
+            _httpClient = new HttpClient();
+        }
+
+        public async Task<IDictionary<string, TimeSpan>> LoadTimeMeasuringWithSitemapAsync(string url)
+        {
+            var results = new ConcurrentDictionary<string, TimeSpan>();
 
             var sitemapLinks = ParseSitemap(url);
 
-            results.Add(url, LoadTimeMeasuring(url));
+            results.TryAdd(url, await LoadTimeMeasuringAsync(url));
 
-            foreach (var link in sitemapLinks)
-            {
-                results.Add(link, LoadTimeMeasuring(link));
-            }
+
+            //foreach (var element in sitemapLinks.Take(3))
+            //{
+            //    var resTime = await LoadTimeMeasuringAsync(element);
+
+            //    results.TryAdd(element, resTime);
+            //}
+
+            CountdownEvent countdown = new CountdownEvent(8);
+            var yy = ForEach(sitemapLinks.Take(8).ToList(), async (element) =>
+           {
+               try
+               {
+                   var resTime = await LoadTimeMeasuringAsync(element);
+
+                   results.TryAdd(element, resTime);
+                   countdown.Signal();
+
+               }
+               catch (Exception exception)
+               {
+
+                   ;
+               }
+           });
+            countdown.Wait();
+
+            //sitemapLinks.Take(100).AsParallel().Select(async element =>
+            //{
+            //    var resTime = await LoadTimeMeasuringAsync(element);
+
+            //    results.TryAdd(element, resTime);
+            //}).ToList();
+
 
             return results;
         }
 
-        public Task<IDictionary<string, TimeSpan>> LoadTimeMeasuringWithSitemapAsync(string url)
-        {
-            var d = new Func<string, IDictionary<string, TimeSpan>>(LoadTimeMeasuringWithSitemap);
-
-            return Task.Run(() => d.Invoke(url));
-        }
-
-        public virtual TimeSpan LoadTimeMeasuring(string url)
+        public virtual async Task<TimeSpan> LoadTimeMeasuringAsync(string url)
         {
             var sw = new Stopwatch();
 
-            using (var client = new System.Net.Http.HttpClient())
+            sw.Start();
+            try
             {
-                sw.Start();
-                client.GetAsync(url);
-                sw.Stop();
+                //_httpClient.BaseAddress = new Uri(url);
+                var t = await _httpClient.GetAsync(url);
+
             }
+            catch (Exception e)
+            {
+                ;
+            }
+            sw.Stop();
             return sw.Elapsed;
         }
 
         public virtual IEnumerable<string> ParseSitemap(string url)
         {
             return SitemapWorker.ParseSitemapFile(url.GetDomain() + "/sitemap.xml");
+        }
+
+        public void Dispose()
+        {
+            _httpClient.Dispose();
         }
     }
 }

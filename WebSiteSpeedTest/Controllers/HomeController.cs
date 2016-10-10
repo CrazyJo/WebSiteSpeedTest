@@ -22,8 +22,11 @@ namespace WebSiteSpeedTest.Controllers
         [HttpPost]
         public async Task<ActionResult> Compute(string url)
         {
-            ILoadTimeManager ltManager = new LoadTimeManager();
-            var vmodel = await ltManager.LoadTimeMeasuringWithSitemapAsync(url);
+            IDictionary<string, TimeSpan> vmodel = null;
+            using (var ltManager = new LoadTimeManager())
+            {
+                vmodel = await ltManager.LoadTimeMeasuringWithSitemapAsync(url);
+            }
             return PartialView("_Compute_Table", vmodel.OrderByDescending(e => e.Value));
         }
 
