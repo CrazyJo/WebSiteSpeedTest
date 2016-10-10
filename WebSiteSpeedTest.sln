@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSiteSpeedTest", "WebSiteSpeedTest\WebSiteSpeedTest.csproj", "{AAF510BE-AC2F-4BD8-8ADB-51CA2A527886}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilitiesPackage", "UtilitiesPackage\UtilitiesPackage.csproj", "{A5CFBE96-E12A-42AE-ABEE-0BE8804DF057}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AILib", "AILib\AILib.csproj", "{D68B51D0-C19C-4F34-9B3B-3A27CB5F67C9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AAF510BE-AC2F-4BD8-8ADB-51CA2A527886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAF510BE-AC2F-4BD8-8ADB-51CA2A527886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAF510BE-AC2F-4BD8-8ADB-51CA2A527886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAF510BE-AC2F-4BD8-8ADB-51CA2A527886}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5CFBE96-E12A-42AE-ABEE-0BE8804DF057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5CFBE96-E12A-42AE-ABEE-0BE8804DF057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5CFBE96-E12A-42AE-ABEE-0BE8804DF057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5CFBE96-E12A-42AE-ABEE-0BE8804DF057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D68B51D0-C19C-4F34-9B3B-3A27CB5F67C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D68B51D0-C19C-4F34-9B3B-3A27CB5F67C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D68B51D0-C19C-4F34-9B3B-3A27CB5F67C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D68B51D0-C19C-4F34-9B3B-3A27CB5F67C9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

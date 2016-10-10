@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-offset-4 col-md-5">
+            <div class="form_head ">
+                <div class="input-group">
+                    <input class="form-control" id="input_url" placeholder="www.example.com" />
+                    <span class="input-group-btn">
+                        @Html.ActionLink("Start test", "Compute", "Home", null, new
+                   {
+                       @class = "btn btn-default",
+                       id = "ajaxLink",
+                       data_ajax = "true",
+                       data_ajax_method = "POST",
+                       data_ajax_update = "#outPut"
+                   })
+                    </span>
+                </div>
+            </div>
+                    <img id="wait_loader" src="~/Content/Images/1 (1).gif" />
+
+
+        </div>
+        <div id="outPut" class="col-md-12">
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        (function ()
+        {
+            var wLoader = $("#wait_loader");
+
+            $("#ajaxLink")
+                .click(function ()
+                {
+                    wLoader.show();
+                    var ajMeth = $(this).attr('data-ajax-method');
+                    var t_url = $(this).attr('href');
+                    var input_data = $("#input_url").val();
+
+                    $.ajax({
+                        type: ajMeth,
+                        url: t_url,
+                        data: { url: input_data }
+                    })
+                        .then(function (e)
+                        {
+                            wLoader.hide();
+                            $("#outPut").html(e);
+                        });
+                    return false;
+                });
+        })();
+    </script>
+}
