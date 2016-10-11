@@ -23,12 +23,25 @@ namespace UtilitiesPackage
 
         public async Task<IDictionary<string, TimeSpan>> LoadTimeMeasuringWithSitemapAsync(string url)
         {
+
             var results = new ConcurrentDictionary<string, TimeSpan>();
 
             var sitemapLinks = ParseSitemap(url);
 
             results.TryAdd(url, await LoadTimeMeasuringAsync(url));
 
+            Stopwatch sw = new Stopwatch();
+            var count = 100;
+            sw.Start();
+
+            await sitemapLinks.ForEachAsync(count, async element =>
+            {
+                var resTime = await LoadTimeMeasuringAsync(element);
+
+                results.TryAdd(element, resTime);
+            });
+            sw.Stop();
+            ;
 
             //foreach (var element in sitemapLinks.Take(3))
             //{
@@ -37,31 +50,26 @@ namespace UtilitiesPackage
             //    results.TryAdd(element, resTime);
             //}
 
-            CountdownEvent countdown = new CountdownEvent(8);
-            var yy = ForEach(sitemapLinks.Take(8).ToList(), async (element) =>
-           {
-               try
-               {
-                   var resTime = await LoadTimeMeasuringAsync(element);
-
-                   results.TryAdd(element, resTime);
-                   countdown.Signal();
-
-               }
-               catch (Exception exception)
-               {
-
-                   ;
-               }
-           });
-            countdown.Wait();
-
-            //sitemapLinks.Take(100).AsParallel().Select(async element =>
+            //CountdownEvent countdown = new CountdownEvent(8);
+            // var yy = ForEach(sitemapLinks.Take(8).ToList(), async (element) =>
             //{
-            //    var resTime = await LoadTimeMeasuringAsync(element);
+            //    try
+            //    {
+            //        var resTime = await LoadTimeMeasuringAsync(element);
 
-            //    results.TryAdd(element, resTime);
-            //}).ToList();
+            //        results.TryAdd(element, resTime);
+            //        countdown.Signal();
+
+            //    }
+            //    catch (Exception exception)
+            //    {
+
+            //        ;
+            //    }
+            //});
+            // sw.Stop();
+            //countdown.Wait();
+
 
 
             return results;
@@ -74,9 +82,7 @@ namespace UtilitiesPackage
             sw.Start();
             try
             {
-                //_httpClient.BaseAddress = new Uri(url);
                 var t = await _httpClient.GetAsync(url);
-
             }
             catch (Exception e)
             {
