@@ -1,16 +1,19 @@
-﻿@model IEnumerable<KeyValuePair<string, TimeSpan>>
+﻿@using UtilitiesPackage;
+@model IEnumerable<MeasurementResult>
 
 <div class="col-md-offset-2 col-md-8" >
     <table class="table table-striped table-bordered table-hover">
-        <tr>
-            <th>Site Name</th>
-            <th>Time (ms)</th>
-        </tr>
-        @foreach (KeyValuePair<string, TimeSpan> pair in Model)
+        <tbody>
+            <tr>
+                <th>Site Name</th>
+                <th>Time (ms)</th>
+            </tr>
+        </tbody>
+        @foreach (var pair in Model)
         {
             <tr>
-                <td>@pair.Key</td>
-                <td>@pair.Value.TotalSeconds</td>
+                <td>@pair.Url</td>
+                <td>@pair.Time.TotalSeconds</td>
             </tr>
         }
     </table>

@@ -20,26 +20,44 @@
                     </span>
                 </div>
             </div>
-                    <img id="wait_loader" src="~/Content/Images/1 (1).gif" />
+            <img id="wait_loader" src="~/Content/Images/1 (1).gif" />
 
 
         </div>
-        <div id="outPut" class="col-md-12">
 
-        </div>
+        <section id="tableResult">
+            <div class="col-md-12">
+                <div class="col-md-offset-2 col-md-8">
+                    <table class="table table-striped table-bordered table-hover">
+                        <tbody id="outPutTB"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
     </div>
 </div>
+
+@section signalR{
+    @Scripts.Render("~/bundles/signalR")
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/indexSignalR.js"></script>
+}
 
 @section scripts{
     <script>
         (function ()
         {
             var wLoader = $("#wait_loader");
+            var sectionTabRes = $("#tableResult");
+
 
             $("#ajaxLink")
                 .click(function ()
                 {
                     wLoader.show();
+                    sectionTabRes.show();
+                    $("#outPutTB").html("<tr><th>Site Name</th><th>Time (ms)</th></tr>");
                     var ajMeth = $(this).attr('data-ajax-method');
                     var t_url = $(this).attr('href');
                     var input_data = $("#input_url").val();
@@ -52,7 +70,8 @@
                         .then(function (e)
                         {
                             wLoader.hide();
-                            $("#outPut").html(e);
+
+                            //$("#outPut").html(e);
                         });
                     return false;
                 });

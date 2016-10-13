@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace AILib
 {
+    public interface ILoggerItem<in T>
+    {
+        void Log(T message);
+    }
+
     public interface ILoadTimeManager : IDisposable
     {
         /// <summary>
@@ -13,7 +18,7 @@ namespace AILib
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        Task<IDictionary<string, TimeSpan>> LoadTimeMeasuringWithSitemapAsync(string url);
+        Task<IEnumerable<TResult>> LoadTimeMeasuringWithSitemapAsync<TResult>(string url);
     }
 
 }

@@ -10,21 +10,6 @@ namespace UtilitiesPackage
 {
     public static class RegexExtensions
     {
-        public static Task ForEachAsync<T>(this IEnumerable<T> source, int partitionCount, Func<T, Task> body)
-        {
-            return Task.WhenAll(
-                from partition in Partitioner.Create(source).GetPartitions(partitionCount)
-                select Task.Run(async () =>
-                {
-                    using (partition)
-                        while (partition.MoveNext())
-                            await body(partition.Current).ContinueWith(t =>
-                            {
-                                //observe exceptions
-                            });
-                }));
-        }
-
         public static string GetDomain(this string url)
         {
             Regex r = new Regex(@"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)");

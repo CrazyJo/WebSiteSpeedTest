@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using AILib;
 using UtilitiesPackage;
+using LoadTimeManager = WebSiteSpeedTest.Infrastructure.LoadTimeManager;
 
 namespace WebSiteSpeedTest.Controllers
 {
@@ -22,14 +23,15 @@ namespace WebSiteSpeedTest.Controllers
         [HttpPost]
         public async Task<ActionResult> Compute(string url)
         {
-            IDictionary<string, TimeSpan> vmodel = null;
-            using (var ltManager = new LoadTimeManager())
-            {
-                vmodel = await ltManager.LoadTimeMeasuringWithSitemapAsync(url);
-            }
-            return PartialView("_Compute_Table", vmodel.OrderByDescending(e => e.Value));
-        }
+            IEnumerable<MeasurementResult> vModel;
 
+            using (var ltManager = new LoadTimeManager { IsLoggerEnabled = true })
+            {
+                vModel = await ltManager.MeasureAsync(url);
+            }
+
+            return PartialView("_Compute_Table", vModel.OrderByDescending(e => e.Time));
+        }
 
         public ActionResult About()
         {

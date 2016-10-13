@@ -18,6 +18,9 @@
     margin-top: 30px;
     margin-left: 15px;
 }
+#tableResult {
+    display: none;
+}
 
 
 /* Set padding to keep content from hitting the edges */
