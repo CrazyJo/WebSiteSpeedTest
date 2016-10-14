@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using UtilitiesPackage;
 using WebSiteSpeedTest.Hubs;
+using WebSiteSpeedTest.Infrastructure.Extensions;
 using WebSiteSpeedTest.Models;
 //using Logger = UtilitiesPackage.Logger<UtilitiesPackage.MeasurementResult>;
 using Logger = UtilitiesPackage.Logger<WebSiteSpeedTest.Models.MeasurementResultViewModel>;
@@ -17,6 +18,7 @@ namespace WebSiteSpeedTest.Infrastructure
     public class LoadTimeManager : IDisposable
     {
         private readonly HttpClient _httpClient;
+        public int ReloadCount { get; set; }
 
         public bool IsLoggerEnabled
         {
@@ -34,6 +36,7 @@ namespace WebSiteSpeedTest.Infrastructure
         public LoadTimeManager()
         {
             _httpClient = new HttpClient();
+            ReloadCount = 3;
         }
 
         /// <summary>
@@ -46,15 +49,15 @@ namespace WebSiteSpeedTest.Infrastructure
 
             var results = new ConcurrentBag<MeasurementResult>();
 
-            var sitemapLinks = ParseSitemap(url);
+            var sitemapLinks = await ParseSitemap(url);
 
-            var firstItem = new MeasurementResult(url, await LoadTimeMeasuringAsync(url));
+            var firstItem = await LoadSeveralTimes(url, ReloadCount);
             results.Add(firstItem);
 
             Stopwatch sw = new Stopwatch();
 
             sw.Start();
-            await LoadTimeMeasuringAsync(sitemapLinks);
+            await LoadTimeMeasuringManyTimesAsync(sitemapLinks, ReloadCount);
             sw.Stop();
 
             #region MyRegion
@@ -69,7 +72,7 @@ namespace WebSiteSpeedTest.Infrastructure
             return results;
         }
 
-        public virtual async Task<IEnumerable<MeasurementResult>> LoadTimeMeasuringAsync(IEnumerable<string> urls)
+        public virtual async Task<IEnumerable<MeasurementResult>> LoadTimeMeasuringManyTimesAsync(IEnumerable<string> urls, int reloadCount)
         {
             if (urls == null)
                 throw new ArgumentNullException(nameof(urls));
@@ -79,14 +82,28 @@ namespace WebSiteSpeedTest.Infrastructure
 
             await urls.ForEachAsync(count, async element =>
             {
-                var resTime = await LoadTimeMeasuringAsync(element);
 
-                var tempElement = new MeasurementResult(element, resTime);
+                var tempElement = await LoadSeveralTimes(element, reloadCount);
 
                 results.Add(tempElement);
             });
 
             return results;
+        }
+
+        public virtual async Task<MeasurementResult> LoadSeveralTimes(string url, int count)
+        {
+            ConcurrentQueue<TimeSpan> tempQueue = new ConcurrentQueue<TimeSpan>();
+            await ParallelExtensions.ForAsync(0, count, async i =>
+            {
+                tempQueue.Enqueue(await LoadTimeMeasuringAsync(url));
+            });
+            var orderedQ = tempQueue.OrderBy(e => e);
+
+            var result = new MeasurementResult(url, orderedQ.First(), orderedQ.Last());
+            Logger.Log(result.ToViewModel());
+
+            return result;
         }
 
         public virtual async Task<TimeSpan> LoadTimeMeasuringAsync(string url)
@@ -99,7 +116,6 @@ namespace WebSiteSpeedTest.Infrastructure
                 var t = await _httpClient.GetAsync(url);
                 sw.Stop();
                 time = sw.Elapsed;
-                Logger.Log(new MeasurementResultViewModel(url, $"{time.TotalSeconds:N2}"));
             }
             catch (Exception e)
             {
@@ -109,9 +125,9 @@ namespace WebSiteSpeedTest.Infrastructure
             return time;
         }
 
-        public virtual IEnumerable<string> ParseSitemap(string url)
+        public virtual async Task<IEnumerable<string>> ParseSitemap(string url)
         {
-            return SitemapWorker.ParseSitemapFile(url.GetDomain() + "/sitemap.xml");
+            return await SitemapWorker.ParseSitemapFile(url.GetDomain() + "/sitemap.xml");
         }
 
         public void Dispose()

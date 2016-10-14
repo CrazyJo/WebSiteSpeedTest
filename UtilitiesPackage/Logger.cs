@@ -11,6 +11,7 @@ namespace UtilitiesPackage
     public static class Logger<T>
     {
         private static readonly List<ILoggerItem<T>> LoggerItems = new List<ILoggerItem<T>>();
+        private static readonly object Sync = new object();
 
         public static bool IsEnabled { get; set; }
 
@@ -27,12 +28,18 @@ namespace UtilitiesPackage
 
         public static void AddLoggerItem(ILoggerItem<T> item)
         {
-            LoggerItems.Add(item);
+            lock (Sync)
+            {
+                LoggerItems.Add(item);
+            }
         }
 
         public static void RemoveLoggerItem(ILoggerItem<T> item)
         {
-            LoggerItems.Remove(item);
+            lock (Sync)
+            {
+                LoggerItems.Remove(item);
+            }
         }
     }
 }

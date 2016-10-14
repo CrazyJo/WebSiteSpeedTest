@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace UtilitiesPackage
 {
     public static class SitemapWorker
     {
-        public static IEnumerable<string> ParseSitemapFile(string url)
+        public static async Task<IEnumerable<string>> ParseSitemapFile(string url)
         {
             XmlDocument rssXmlDoc = new XmlDocument();
 
@@ -19,7 +20,7 @@ namespace UtilitiesPackage
             {
                 rssXmlDoc.Load(url);
 
-                ICollection<string> listResult;
+                IEnumerable<string> listResult;
                 XmlNamespaceManager nsmgr;
                 // Iterate through the top level nodes and find the "urlset" node. 
                 foreach (XmlNode topNode in rssXmlDoc.ChildNodes)
@@ -33,16 +34,25 @@ namespace UtilitiesPackage
 
                         // Get all URL nodes and iterate through it.
                         XmlNodeList urlNodes = topNode.ChildNodes;
-                        listResult = GetUrls(urlNodes, nsmgr);
 
-                        if (listResult.Count > 0 && nodeName == "sitemapindex")
+                        listResult = await GetUrls(urlNodes, nsmgr);
+
+                        if (listResult.Count() > 0 && nodeName == "sitemapindex")
                         {
-                            List<string> tempList = new List<string>();
+                            var tempList = new ConcurrentQueue<string>();
 
-                            foreach (var u in listResult)
+                            await listResult.ForEachAsync(100, async e =>
                             {
-                                tempList.AddRange(ParseSitemapFile(u));
-                            }
+                                foreach (var t in await ParseSitemapFile(e))
+                                {
+                                    tempList.Enqueue(t);
+                                }
+                            });
+
+                            //foreach (var u in listResult)
+                            //{
+                            //    tempList.AddRange(await ParseSitemapFile(u));
+                            //}
 
                             if (tempList.Count > 0)
                                 return tempList;
@@ -54,30 +64,68 @@ namespace UtilitiesPackage
             }
             catch (Exception e)
             {
-                //throw new Exception("Wrong URL", e);
-                return new List<string>();
+                ;
+                //return new List<string>();
             }
 
             return new List<string>();
         }
 
-        public static ICollection<string> GetUrls(XmlNodeList listNodes, XmlNamespaceManager nsmgr)
+        public static async Task<IEnumerable<string>> GetUrls(XmlNodeList listNodes, XmlNamespaceManager nsmgr)
         {
-            List<string> resultList = new List<string>();
+            if (listNodes == null)
+                throw new ArgumentNullException(nameof(listNodes));
 
-            if (listNodes != null)
+
+            var resultList = new ConcurrentQueue<string>();
+
+
+
+            await listNodes.ForEachAsync<XmlNode>(urlNode =>
             {
-                foreach (XmlNode urlNode in listNodes)
+                XmlNode locNode = urlNode.SelectSingleNode("ns:loc", nsmgr);
+                if (locNode != null)
                 {
-                    // Get the "loc" node and retrieve the inner text.
-                    XmlNode locNode = urlNode.SelectSingleNode("ns:loc", nsmgr);
-
-                    if (locNode != null)
-                    {
-                        resultList.Add(locNode.InnerText);
-                    }
+                    resultList.Enqueue(locNode.InnerText);
                 }
-            }
+            });
+
+            #region ActionBlock
+
+            //var xmlBlock = new ActionBlock<XmlNode>(urlNode =>
+            //{
+            //    XmlNode locNode = urlNode.SelectSingleNode("ns:loc", nsmgr);
+
+            //    if (locNode != null)
+            //    {
+            //        resultList.Add(locNode.InnerText);
+            //    }
+
+            //}, new ExecutionDataflowBlockOptions{ MaxDegreeOfParallelism = Environment.ProcessorCount });
+
+
+            //foreach (XmlNode node in listNodes)
+            //{
+            //    await xmlBlock.SendAsync(node);
+            //}
+
+            //await xmlBlock.Completion;
+
+            #endregion
+
+            #region Synchronously
+
+            //foreach (XmlNode urlNode in listNodes)
+            //{
+            //    // Get the "loc" node and retrieve the inner text.
+            //    XmlNode locNode = urlNode.SelectSingleNode("ns:loc", nsmgr);
+
+            //    if (locNode != null)
+            //    {
+            //        resultList.Add(locNode.InnerText);
+            //    }
+            //}
+            #endregion
 
             return resultList;
         }

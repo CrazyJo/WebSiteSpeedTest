@@ -30,7 +30,7 @@ namespace WebSiteSpeedTest.Controllers
                 vModel = await ltManager.MeasureAsync(url);
             }
 
-            return PartialView("_Compute_Table", vModel.OrderByDescending(e => e.Time));
+            return PartialView("_Compute_Table", vModel.OrderByDescending(e => e.MinTime));
         }
 
         public ActionResult About()

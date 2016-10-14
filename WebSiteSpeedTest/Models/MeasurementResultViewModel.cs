@@ -2,13 +2,16 @@
 {
     public struct MeasurementResultViewModel
     {
-        public string time;
+        public string mintime;
+        public string maxtime;
         public string url;
 
-        public MeasurementResultViewModel(string url, string time)
+        public MeasurementResultViewModel(string url, string mintime, string maxtime)
         {
             this.url = url;
-            this.time = time;
+            this.mintime = mintime;
+            this.maxtime = maxtime;
         }
+
     }
 }

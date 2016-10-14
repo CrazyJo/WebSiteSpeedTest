@@ -29,7 +29,9 @@
             <div class="col-md-12">
                 <div class="col-md-offset-2 col-md-8">
                     <table class="table table-striped table-bordered table-hover">
-                        <tbody id="outPutTB"></tbody>
+                        <tbody id="outPutTB">
+
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -57,7 +59,7 @@
                 {
                     wLoader.show();
                     sectionTabRes.show();
-                    $("#outPutTB").html("<tr><th>Site Name</th><th>Time (ms)</th></tr>");
+                    $("#outPutTB").html("<tr><th>Url</th><th>Min (s)</th><th>Max (s)</th></tr>");
                     var ajMeth = $(this).attr('data-ajax-method');
                     var t_url = $(this).attr('href');
                     var input_data = $("#input_url").val();
