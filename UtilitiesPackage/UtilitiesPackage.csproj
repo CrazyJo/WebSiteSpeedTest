@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Logger.cs" />
     <Compile Include="MeasurementResult.cs" />
+    <Compile Include="ParallelDfExtensions.cs" />
     <Compile Include="ParallelExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexExtensions.cs" />

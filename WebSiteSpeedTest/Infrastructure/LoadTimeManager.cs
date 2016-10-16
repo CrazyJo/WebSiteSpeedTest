@@ -49,15 +49,20 @@ namespace WebSiteSpeedTest.Infrastructure
 
             var results = new ConcurrentBag<MeasurementResult>();
 
-            var sitemapLinks = await ParseSitemap(url);
-
             var firstItem = await LoadSeveralTimes(url, ReloadCount);
             results.Add(firstItem);
+
+
+            var sitemapLinks = await ParseSitemap(url);
 
             Stopwatch sw = new Stopwatch();
 
             sw.Start();
-            await LoadTimeMeasuringManyTimesAsync(sitemapLinks, ReloadCount);
+
+            //todo: добавить результаты вычислений в results
+            if (sitemapLinks.Count() > 0)
+                await LoadTimeMeasuringManyTimesAsync(sitemapLinks, ReloadCount);
+
             sw.Stop();
 
             #region MyRegion
@@ -78,15 +83,22 @@ namespace WebSiteSpeedTest.Infrastructure
                 throw new ArgumentNullException(nameof(urls));
 
             var results = new ConcurrentBag<MeasurementResult>();
-            var count = 100;
 
-            await urls.ForEachAsync(count, async element =>
+            await urls.ForEach(async element =>
             {
-
                 var tempElement = await LoadSeveralTimes(element, reloadCount);
 
                 results.Add(tempElement);
             });
+
+            //var count = 100;
+            //await urls.ForEachAsync(count, async element =>
+            //{
+
+            //    var tempElement = await LoadSeveralTimes(element, reloadCount);
+
+            //    results.Add(tempElement);
+            //});
 
             return results;
         }
@@ -94,10 +106,18 @@ namespace WebSiteSpeedTest.Infrastructure
         public virtual async Task<MeasurementResult> LoadSeveralTimes(string url, int count)
         {
             ConcurrentQueue<TimeSpan> tempQueue = new ConcurrentQueue<TimeSpan>();
-            await ParallelExtensions.ForAsync(0, count, async i =>
+
+            await ParallelDfExtensions.For(0, count, async i =>
             {
-                tempQueue.Enqueue(await LoadTimeMeasuringAsync(url));
+                tempQueue.Enqueue(await LoadTimeMeasuringAsync(url).ConfigureAwait(false));
             });
+
+            //await ParallelExtensions.ForAsync(0, count, async i =>
+            //{
+            //    tempQueue.Enqueue(await LoadTimeMeasuringAsync(url));
+            //});
+
+
             var orderedQ = tempQueue.OrderBy(e => e);
 
             var result = new MeasurementResult(url, orderedQ.First(), orderedQ.Last());
@@ -113,7 +133,7 @@ namespace WebSiteSpeedTest.Infrastructure
             try
             {
                 sw.Start();
-                var t = await _httpClient.GetAsync(url);
+                var t = await _httpClient.GetAsync(url).ConfigureAwait(false);
                 sw.Stop();
                 time = sw.Elapsed;
             }
@@ -127,7 +147,15 @@ namespace WebSiteSpeedTest.Infrastructure
 
         public virtual async Task<IEnumerable<string>> ParseSitemap(string url)
         {
-            return await SitemapWorker.ParseSitemapFile(url.GetDomain() + "/sitemap.xml");
+            var xmlDocs = await SitemapWorker.FindSitemap(url);
+            var list = new List<string>();
+
+            foreach (var doc in xmlDocs)
+            {
+                list.AddRange(await SitemapWorker.ParseSitemapFile(doc));
+            }
+
+            return list;
         }
 
         public void Dispose()

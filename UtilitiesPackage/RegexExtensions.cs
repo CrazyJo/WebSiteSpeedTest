@@ -1,15 +1,25 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace UtilitiesPackage
 {
     public static class RegexExtensions
     {
+        public static IEnumerable<string> GetUrlsFromRobotsTxt(this string content)
+        {
+            var result = new List<string>();
+
+            Regex r = new Regex(@"(?<=^sitemap.*)(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
+                RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            foreach (Match match in r.Matches(content))
+            {
+                result.Add(match.Value);
+            }
+
+            return result;
+        }
+
         public static string GetDomain(this string url)
         {
             Regex r = new Regex(@"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)");
