@@ -120,6 +120,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -187,6 +189,11 @@
     <Compile Include="Infrastructure\Extensions\ToViewModelExtensions.cs" />
     <Compile Include="Infrastructure\LoadTimeManager.cs" />
     <Compile Include="Infrastructure\SignalrLoggerItem.cs" />
+    <Compile Include="Models\Db\Entities\HistoryRow.cs" />
+    <Compile Include="Models\Db\Entities\SitemapRow.cs" />
+    <Compile Include="Models\Db\SpeedTestContext.cs" />
+    <Compile Include="Models\Db\SpeedTestContextInitializer.cs" />
+    <Compile Include="Models\MeasurementResult.cs" />
     <Compile Include="Models\MeasurementResultViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

@@ -46,7 +46,6 @@ namespace WebSiteSpeedTest.Infrastructure
         /// <returns></returns>
         public async Task<IEnumerable<MeasurementResult>> MeasureAsync(string url)
         {
-
             var results = new ConcurrentBag<MeasurementResult>();
 
             var firstItem = await LoadSeveralTimes(url, ReloadCount);
@@ -61,18 +60,9 @@ namespace WebSiteSpeedTest.Infrastructure
 
             //todo: добавить результаты вычислений в results
             if (sitemapLinks.Count() > 0)
-                await LoadTimeMeasuringManyTimesAsync(sitemapLinks, ReloadCount);
+                await LoadTimeMeasuringManyTimesAsync(sitemapLinks.Take(1000), ReloadCount);
 
             sw.Stop();
-
-            #region MyRegion
-            //foreach (var element in sitemapLinks)
-            //{
-            //    var resTime = await LoadTimeMeasuringAsync(element);
-
-            //    results.TryAdd(element, resTime);
-            //} 
-            #endregion
 
             return results;
         }

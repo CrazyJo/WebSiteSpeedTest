@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using AILib;
 using UtilitiesPackage;
+using WebSiteSpeedTest.Models;
+using WebSiteSpeedTest.Models.Db;
 using LoadTimeManager = WebSiteSpeedTest.Infrastructure.LoadTimeManager;
 
 namespace WebSiteSpeedTest.Controllers
