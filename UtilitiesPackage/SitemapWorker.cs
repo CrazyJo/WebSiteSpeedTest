@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -11,6 +13,14 @@ namespace UtilitiesPackage
     public static class SitemapWorker
     {
         static readonly HttpClient HttpClient = new HttpClient();
+
+        public static event Action<string> FoundUrl;
+
+        static void OnFoundUrl(string url)
+        {
+            Volatile.Read(ref FoundUrl)?.Invoke(url);
+        }
+
         public static async Task<IEnumerable<XmlDocument>> FindSitemap(string url)
         {
             var results = new ConcurrentQueue<XmlDocument>();
@@ -34,23 +44,6 @@ namespace UtilitiesPackage
                         if (doc != null)
                             results.Enqueue(doc);
                     }).ConfigureAwait(false);
-
-                    #region Synchronously
-
-                    //foreach (var uri in content.GetUrlsFromRobotsTxt())
-                    //{
-                    //    try
-                    //    {
-                    //        results.Add(await LoadDoc(uri));
-                    //    }
-                    //    catch (Exception exception)
-                    //    {
-                    //        ;
-                    //    }
-                    //}
-
-                    #endregion
-
                 }
                 catch (Exception exception)
                 {
@@ -64,19 +57,18 @@ namespace UtilitiesPackage
 
         static async Task<XmlDocument> LoadDoc(string uri)
         {
-            XmlDocument tempDoc = null;
-            //var client = new HttpClient();
+            var tempDoc = new XmlDocument();
+            var responseStream = await HttpClient.GetStreamAsync(uri).ConfigureAwait(false);
 
             try
             {
-                tempDoc = new XmlDocument();
-                var t = await HttpClient.GetStringAsync(uri).ConfigureAwait(false);
-                //var t = await client.GetStringAsync(uri);
-                tempDoc.LoadXml(t);
+                tempDoc.Load(responseStream);
             }
-            catch (Exception exception)
+            catch (XmlException)
             {
-                throw;
+                //todo: throw AggregateException, need to fix
+                using (var zip = new GZipStream(responseStream, CompressionMode.Decompress))
+                    tempDoc.Load(zip);
             }
 
             return tempDoc;
@@ -87,81 +79,81 @@ namespace UtilitiesPackage
             if (rssXmlDoc == null)
                 throw new ArgumentNullException(nameof(rssXmlDoc));
 
-            try
+            var root = rssXmlDoc.DocumentElement;
+
+            if (root == null) throw new InvalidOperationException("This is an empty xml file");
+
+            var localName = root.LocalName;
+
+            if (localName.Equals("urlset", StringComparison.InvariantCultureIgnoreCase))
+                return await ParseUrlset(rssXmlDoc, GetNamespace(rssXmlDoc)).ConfigureAwait(false);
+           
+            if (!root.LocalName.Equals("sitemapindex", StringComparison.InvariantCultureIgnoreCase))
+                throw new InvalidOperationException(nameof(rssXmlDoc) + " it is not sitemap.xml");
+
+            // Use the Namespace Manager, so that we can fetch nodes using the namespace
+            var nsmgr = new XmlNamespaceManager(rssXmlDoc.NameTable);
+            nsmgr.AddNamespace("ns", root.NamespaceURI);
+
+            // Get all sitemap.xml nodes
+            var sitemapNodes = root.ChildNodes;
+            var sitemapUrls = await GetUrls(sitemapNodes, nsmgr).ConfigureAwait(false);
+            var resultList = new ConcurrentBag<string>();
+
+            //todo
+            sitemapUrls = sitemapUrls.ToList().Take(1);
+
+            await sitemapUrls.ForEach(async url =>
             {
-                IEnumerable<string> listResult;
-                XmlNamespaceManager nsmgr;
+                var doc = await LoadDoc(url).ConfigureAwait(false);
+                var tempRes = await ParseUrlset(doc, nsmgr).ConfigureAwait(false);
+                resultList.AddRange(tempRes);
+            }).ConfigureAwait(false);
 
-                // Iterate through the top level nodes and find the "urlset" node. 
-                foreach (XmlNode topNode in rssXmlDoc.ChildNodes)
-                {
-                    var nodeName = topNode.Name.ToLower();
-                    if (nodeName.Contains("urlset") || nodeName == "sitemapindex")
-                    {
-                        // Use the Namespace Manager, so that we can fetch nodes using the namespace
-                        nsmgr = new XmlNamespaceManager(rssXmlDoc.NameTable);
-                        nsmgr.AddNamespace("ns", topNode.NamespaceURI);
-
-                        // Get all URL nodes and iterate through it.
-                        XmlNodeList urlNodes = topNode.ChildNodes;
-
-                        listResult = await GetUrls(urlNodes, nsmgr).ConfigureAwait(false);
-
-
-                        #region The first level of nesting "sitemapIndex"
-
-                        if (listResult.Count() > 0 && nodeName == "sitemapindex")
-                        {
-                            var tempList = new ConcurrentQueue<string>();
-
-                            // It is necessary to parallelize the computation of all * .xml links 
-                            await listResult.ForEach(async tUrl =>
-                            {
-                                foreach (var t in await ParseSitemapFile(await LoadDoc(tUrl)))
-                                {
-                                    tempList.Enqueue(t);
-                                }
-                            }).ConfigureAwait(false);
-
-                            if (tempList.Count > 0)
-                                return tempList;
-
-                            return new List<string>();
-                        }
-
-                        #endregion
-
-                        return listResult;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                ;
-                //return new List<string>();
-            }
-
-            return new List<string>();
+            return resultList;
         }
 
-        public static async Task<IEnumerable<string>> GetUrls(XmlNodeList listNodes, XmlNamespaceManager nsmgr)
+        private static XmlNamespaceManager GetNamespace(XmlDocument xmlDoc)
+        {
+            var nsmgr = new XmlNamespaceManager(xmlDoc.NameTable);
+            nsmgr.AddNamespace("ns", xmlDoc.DocumentElement.NamespaceURI);
+            return nsmgr;
+        }
+
+        private static async Task<IEnumerable<string>> ParseUrlset(XmlDocument rssXmlDoc, XmlNamespaceManager nsmgr)
+        {
+            if (rssXmlDoc == null)
+                throw new ArgumentNullException(nameof(rssXmlDoc));
+
+            var root = rssXmlDoc.DocumentElement;
+
+            if (root != null)
+            {
+                return await GetUrls(root.ChildNodes, nsmgr, true);
+            }
+
+            return null;
+        }
+
+        private static async Task<IEnumerable<string>> GetUrls(XmlNodeList listNodes, XmlNamespaceManager nsmgr, bool enableEvent = false)
         {
             if (listNodes == null)
                 throw new ArgumentNullException(nameof(listNodes));
-
 
             var resultList = new ConcurrentQueue<string>();
 
             await listNodes.ForEach<XmlNode>(node =>
             {
-                XmlNode locNode = node.SelectSingleNode("ns:loc", nsmgr);
+                var locNode = node.SelectSingleNode("ns:loc", nsmgr);
 
-                if (locNode != null)
-                    resultList.Enqueue(locNode.InnerText);
+                if (locNode == null) return;
+                var url = locNode.InnerText;
+                if (enableEvent)
+                    OnFoundUrl(url);
+                resultList.Enqueue(url);
             }).ConfigureAwait(false);
 
             return resultList;
         }
     }
-
 }

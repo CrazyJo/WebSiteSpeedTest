@@ -2,7 +2,7 @@
 
 namespace WebSiteSpeedTest.Hubs
 {
-    public class LoggerHub : Hub
+    public class NotificationHub : Hub
     {
     }
 }

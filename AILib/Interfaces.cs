@@ -2,13 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AILib
+namespace Core
 {
-    public interface ILoggerItem<in T>
-    {
-        void Log(T message);
-    }
-
     public interface ILoadTimeManager : IDisposable
     {
         /// <summary>

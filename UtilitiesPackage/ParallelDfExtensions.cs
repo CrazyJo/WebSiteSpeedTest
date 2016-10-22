@@ -25,16 +25,18 @@ namespace UtilitiesPackage
 
         static ParallelDfExtensions()
         {
-            int processorCount = Environment.ProcessorCount;
+            degreeOfParallelism = Environment.ProcessorCount;
 
-            if (processorCount > 2)
-            {
-                degreeOfParallelism = processorCount - 2;
-            }
-            else
-            {
-                degreeOfParallelism = 1;
-            }
+            //int processorCount = Environment.ProcessorCount;
+
+            //if (processorCount > 2)
+            //{
+            //    degreeOfParallelism = processorCount - 2;
+            //}
+            //else
+            //{
+            //    degreeOfParallelism = 1;
+            //}
         }
 
         public static Task ForEach<TInput>(this IEnumerable source, Action<TInput> body)

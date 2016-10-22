@@ -22,6 +22,12 @@
     display: none;
 }
 
+#historyBtn {
+    position: fixed;
+    top: 78px;
+    right: 50px;
+}
+
 
 /* Set padding to keep content from hitting the edges */
 .body-content {

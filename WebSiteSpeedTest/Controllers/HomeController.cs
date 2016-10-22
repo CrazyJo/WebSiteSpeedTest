@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using AILib;
-using UtilitiesPackage;
-using WebSiteSpeedTest.Models;
-using WebSiteSpeedTest.Models.Db;
-using LoadTimeManager = WebSiteSpeedTest.Infrastructure.LoadTimeManager;
+using WebSiteSpeedTest.Infrastructure;
+using Core.Model;
+using Data;
 
 namespace WebSiteSpeedTest.Controllers
 {
@@ -27,7 +20,7 @@ namespace WebSiteSpeedTest.Controllers
         {
             IEnumerable<MeasurementResult> vModel;
 
-            using (var ltManager = new LoadTimeManager { IsLoggerEnabled = true })
+            using (var ltManager = new LoadTimeManager())
             {
                 vModel = await ltManager.MeasureAsync(url);
             }

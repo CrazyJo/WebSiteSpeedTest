@@ -1,9 +1,7 @@
-﻿using System;
-using System.Data.Entity;
-using System.Linq;
-using WebSiteSpeedTest.Models.Db.Entities;
+﻿using System.Data.Entity;
+using Core.Model;
 
-namespace WebSiteSpeedTest.Models.Db
+namespace Data
 {
 
     public class SpeedTestContext : DbContext
@@ -20,6 +18,12 @@ namespace WebSiteSpeedTest.Models.Db
         public virtual DbSet<HistoryRow> HistoryRows { get; set; }
 
         public virtual DbSet<SitemapRow> SitemapRows { get; set; }
-    }
 
+        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<HistoryRow>().HasKey(e => e.Id);
+
+        //    base.OnModelCreating(modelBuilder);
+        //}
+    }
 }

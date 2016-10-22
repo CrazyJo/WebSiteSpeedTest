@@ -1,4 +1,4 @@
-﻿using UtilitiesPackage;
+﻿using Core.Model;
 using WebSiteSpeedTest.Models;
 
 namespace WebSiteSpeedTest.Infrastructure.Extensions

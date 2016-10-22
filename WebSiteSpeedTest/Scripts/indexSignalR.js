@@ -1,7 +1,7 @@
 ﻿$(function ()
 {
 
-    var notificationhub = $.connection.loggerHub;
+    var notificationhub = $.connection.notificationHub;
 
     notificationhub.client.displayMessage = function (message)
     {

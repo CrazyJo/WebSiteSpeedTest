@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebSiteSpeedTest.Models
+namespace Core.Model
 {
     public class MeasurementResult
     {
@@ -14,9 +14,14 @@ namespace WebSiteSpeedTest.Models
             MinTime = minTime;
             MaxTime = maxTime;
         }
-        public int Id { get; set; }
+
+        //[JsonProperty("url")]
         public string Url { get; set; }
+
+        //[JsonProperty("mintime")]
         public TimeSpan MinTime { get; set; }
+
+        //[JsonProperty("maxtime")]
         public TimeSpan MaxTime { get; set; }
     }
 }

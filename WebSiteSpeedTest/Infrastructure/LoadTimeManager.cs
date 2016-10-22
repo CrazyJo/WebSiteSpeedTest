@@ -5,39 +5,20 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
+using Core.Model;
+using Data;
 using UtilitiesPackage;
 using WebSiteSpeedTest.Hubs;
-using WebSiteSpeedTest.Infrastructure.Extensions;
-using WebSiteSpeedTest.Models;
-//using Logger = UtilitiesPackage.Logger<UtilitiesPackage.MeasurementResult>;
-using Logger = UtilitiesPackage.Logger<WebSiteSpeedTest.Models.MeasurementResultViewModel>;
-
 
 namespace WebSiteSpeedTest.Infrastructure
 {
     public class LoadTimeManager : IDisposable
     {
-        private readonly HttpClient _httpClient;
-        public int ReloadCount { get; set; }
-
-        public bool IsLoggerEnabled
-        {
-            get { return Logger.IsEnabled; }
-            set
-            {
-                if (value && !Logger.IsEnabled)
-                    Logger.AddLoggerItem(new SignalrLoggerItem<MeasurementResultViewModel, LoggerHub>());
-
-                Logger.IsEnabled = value;
-
-            }
-        }
-
-        public LoadTimeManager()
-        {
-            _httpClient = new HttpClient();
-            ReloadCount = 3;
-        }
+        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly ConcurrentBag<SitemapRow> _results = new ConcurrentBag<SitemapRow>();
+        private readonly SignalrWorker<NotificationHub> _displayer = new SignalrWorker<NotificationHub>();
+        private string _guid;
 
         /// <summary>
         /// It measures the load time of the site and all its references in the sitemap.xml
@@ -46,72 +27,58 @@ namespace WebSiteSpeedTest.Infrastructure
         /// <returns></returns>
         public async Task<IEnumerable<MeasurementResult>> MeasureAsync(string url)
         {
-            var results = new ConcurrentBag<MeasurementResult>();
+            var dg = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+            _guid = Guid.NewGuid().ToString();
+            var stopwatch = new Stopwatch();
 
-            var firstItem = await LoadSeveralTimes(url, ReloadCount);
-            results.Add(firstItem);
+            var historyRow = await LoadSeveralTimes<HistoryRow>(url);
+            _displayer.DisplayMessage(historyRow);
+            historyRow.Id = _guid;
+            historyRow.Date = DateTime.Now;
 
+            stopwatch.Start();
+            var loc = await ParseSitemap(url);
+            stopwatch.Stop();
+            stopwatch.Restart();
 
-            var sitemapLinks = await ParseSitemap(url);
+            await loc.Take(1000).ForEachAsync(10, TestAndDisplay);
+            //await loc.Take(100).ForEach(TestAndDisplay);
+            stopwatch.Stop();
 
-            Stopwatch sw = new Stopwatch();
+            Committer.Save(historyRow, _results);
 
-            sw.Start();
-
-            //todo: добавить результаты вычислений в results
-            if (sitemapLinks.Count() > 0)
-                await LoadTimeMeasuringManyTimesAsync(sitemapLinks.Take(1000), ReloadCount);
-
-            sw.Stop();
-
-            return results;
+            return _results;
         }
 
-        public virtual async Task<IEnumerable<MeasurementResult>> LoadTimeMeasuringManyTimesAsync(IEnumerable<string> urls, int reloadCount)
+        async Task TestAndDisplay(string url)
         {
-            if (urls == null)
-                throw new ArgumentNullException(nameof(urls));
-
-            var results = new ConcurrentBag<MeasurementResult>();
-
-            await urls.ForEach(async element =>
-            {
-                var tempElement = await LoadSeveralTimes(element, reloadCount);
-
-                results.Add(tempElement);
-            });
-
-            //var count = 100;
-            //await urls.ForEachAsync(count, async element =>
-            //{
-
-            //    var tempElement = await LoadSeveralTimes(element, reloadCount);
-
-            //    results.Add(tempElement);
-            //});
-
-            return results;
+            var item = await LoadSeveralTimes<SitemapRow>(url);
+            _displayer.DisplayMessage(item);
+            item.HistoryRowId = _guid;
+            _results.Add(item);
         }
 
-        public virtual async Task<MeasurementResult> LoadSeveralTimes(string url, int count)
+        public virtual async Task<T> LoadSeveralTimes<T>(string url, int timesCount = 3) where T : MeasurementResult, new()
         {
-            ConcurrentQueue<TimeSpan> tempQueue = new ConcurrentQueue<TimeSpan>();
+            var tempQueue = new ConcurrentQueue<TimeSpan>();
 
-            await ParallelDfExtensions.For(0, count, async i =>
+            await ParallelExtensions.ForAsync(0, timesCount, async i =>
             {
-                tempQueue.Enqueue(await LoadTimeMeasuringAsync(url).ConfigureAwait(false));
+                tempQueue.Enqueue(await LoadTimeMeasuringAsync(url));
             });
 
-            //await ParallelExtensions.ForAsync(0, count, async i =>
+            //await ParallelDfExtensions.For(0, timesCount, async i =>
             //{
-            //    tempQueue.Enqueue(await LoadTimeMeasuringAsync(url));
+            //    tempQueue.Enqueue(await LoadTimeMeasuringAsync(url).ConfigureAwait(false));
             //});
-
 
             var orderedQ = tempQueue.OrderBy(e => e);
-
-            var result = new MeasurementResult(url, orderedQ.First(), orderedQ.Last());
-            Logger.Log(result.ToViewModel());
+            var result = new T
+            {
+                Url = url,
+                MinTime = orderedQ.First(),
+                MaxTime = orderedQ.Last()
+            };
 
             return result;
         }
@@ -123,7 +90,7 @@ namespace WebSiteSpeedTest.Infrastructure
             try
             {
                 sw.Start();
-                var t = await _httpClient.GetAsync(url).ConfigureAwait(false);
+                var t = await _httpClient.GetAsync(url);
                 sw.Stop();
                 time = sw.Elapsed;
             }
