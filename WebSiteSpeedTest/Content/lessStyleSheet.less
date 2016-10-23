@@ -1,0 +1,27 @@
+﻿@history-font-size: 12px;
+
+.history-row {
+    font-size: @history-font-size !important;
+
+    div {
+        overflow: hidden;
+    }
+
+    a {
+        color: black;
+    }
+}
+
+.sitemap-row {
+    margin: 5px 0;
+    .history-row();
+}
+
+.day-header {
+    font-size: @history-font-size + 2;
+    margin-left: 15px;
+}
+
+.right-offset {
+    margin-right: 15px;
+}

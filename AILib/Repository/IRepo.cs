@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Core.Repository
 {
-    public interface IRepo<T>
+    public interface IRepo<T> : IDisposable
     {
         void Delete(T obj);
 

@@ -10,8 +10,7 @@ namespace WebSiteSpeedTest.Infrastructure
 
         public void DisplayMessage(MeasurementResult message)
         {
-            //_hubContextcontext.Clients.All.displayMessage(message);
-            //todo: постит всем юзерам
+            // todo: исправить что б отправлял сообщегия только текущему юзеру
             _hubContextcontext.Clients.All.displayMessage(new MeasurementResultViewModel(message.Url, $"{message.MinTime.TotalSeconds:N2}", $"{message.MaxTime.TotalSeconds:N2}"));
         }
     }

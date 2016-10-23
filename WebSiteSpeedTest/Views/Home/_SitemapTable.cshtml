@@ -1,0 +1,28 @@
+﻿@using Core.Model
+@using WebSiteSpeedTest.Models
+@model  HistoryPageViewModel<SitemapRow>
+
+<div class="panel-body">
+    @foreach (var sRow in Model.Content)
+    {
+        <div class="sitemap-row row">
+            <div class="col-md-offset-1 col-md-8">
+                <a target="_blank" href=@sRow.Url>@sRow.Url</a>
+            </div>
+            <div class="col-md-3">
+                <span class="right-offset">Min: @sRow.MinTime.TotalSeconds.ToString("N2")</span>
+                <span>Max: @sRow.MaxTime.TotalSeconds.ToString("N2")</span>
+            </div>
+        </div>
+    }
+
+    @if (Model.PaginationEnable)
+    {
+    <div class="pagination-footer">
+        <ul class="pager">
+            <li class="disabled"><a href="#">Previous</a></li>
+            <li><a href="#">Next</a></li>
+        </ul>
+    </div>
+    }
+</div>

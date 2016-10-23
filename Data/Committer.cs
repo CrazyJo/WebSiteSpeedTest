@@ -1,34 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core.Model;
 
 namespace Data
 {
-    public static class Committer
+    public class Committer : IDisposable
     {
-        private static readonly Repo<HistoryRow> HistoryRepo;
-        private static readonly Repo<SitemapRow> SmRepo;
+        private readonly Repo<HistoryRow> _historyRepo;
+        private readonly Repo<SitemapRow> _smRepo;
 
-        static Committer()
+        public Committer()
         {
             IDbContextFactory db = new DbContextFactory();
-            HistoryRepo  = new Repo<HistoryRow>(db);
-            SmRepo = new Repo<SitemapRow>(db);
+            _historyRepo  = new Repo<HistoryRow>(db);
+            _smRepo = new Repo<SitemapRow>(db);
         }
 
-        public static void Save(HistoryRow historyRow, IEnumerable<SitemapRow> sitemapRows)
+        public void Save(HistoryRow historyRow, IEnumerable<SitemapRow> sitemapRows)
         {
             SaveHistory(historyRow);
             SaveSitemap(sitemapRows);
         }
 
-        public static void SaveHistory(HistoryRow historyRow)
+        public void SaveHistory(HistoryRow historyRow)
         {
-            HistoryRepo.Insert(historyRow);
+            _historyRepo.Insert(historyRow);
         }
 
-        public static void SaveSitemap(IEnumerable<SitemapRow> sitemapRows)
+        public void SaveSitemap(IEnumerable<SitemapRow> sitemapRows)
         {
-            SmRepo.AddRange(sitemapRows);
+            _smRepo.AddRange(sitemapRows);
+        }
+
+        public IEnumerable<HistoryRow> GetHistory()
+        {
+            return _historyRepo.GetAll().ToList();
+        }
+
+        public IEnumerable<SitemapRow> GetSitemap(string historyRowId)
+        {
+            return _smRepo.Where(e => e.HistoryRowId == historyRowId);
+        }
+
+        public void Dispose()
+        {
+            _historyRepo.Dispose();
+            _smRepo.Dispose();
         }
     }
 }

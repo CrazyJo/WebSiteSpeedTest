@@ -79,6 +79,11 @@ namespace Data
 
             return queryable;
         }
+
+        public void Dispose()
+        {
+            DbContext.Dispose();
+        }
     }
 
 }

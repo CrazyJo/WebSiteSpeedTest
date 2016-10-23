@@ -18,6 +18,7 @@ namespace WebSiteSpeedTest.Infrastructure
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly ConcurrentBag<SitemapRow> _results = new ConcurrentBag<SitemapRow>();
         private readonly SignalrWorker<NotificationHub> _displayer = new SignalrWorker<NotificationHub>();
+        private readonly Committer _committer = new Committer();
         private string _guid;
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace WebSiteSpeedTest.Infrastructure
             //await loc.Take(100).ForEach(TestAndDisplay);
             stopwatch.Stop();
 
-            Committer.Save(historyRow, _results);
+            _committer.Save(historyRow, _results);
 
             return _results;
         }

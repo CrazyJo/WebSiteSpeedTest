@@ -1,0 +1,40 @@
+﻿@using Core.Model
+@model  IEnumerable<HistoryRow>
+
+<div class="panel-group" id="accordion">
+
+    @{
+        DateTime date = new DateTime();
+    }
+
+    @foreach (var row in Model)
+    {
+        if (date.Date != row.Date.Date)
+        {
+            date = row.Date.Date;
+            <h3 class="day-header">@row.Date.ToLongDateString()</h3>
+        }
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="history-row panel-title">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <time>@row.Date.ToShortTimeString()</time>
+                        </div>
+                        <div class="col-md-8">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@row.Id" data-switch="true" data-url=@Url.Action("HistorySitemap")>@row.Url</a>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="right-offset">Min: @row.MinTime.TotalSeconds.ToString("N2")</span>
+                            <span>Max: @row.MaxTime.TotalSeconds.ToString("N2")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id=@row.Id class="panel-collapse collapse">
+            </div>
+        </div>
+    }
+
+</div>

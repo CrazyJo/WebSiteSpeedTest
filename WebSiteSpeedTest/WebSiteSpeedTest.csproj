@@ -193,6 +193,7 @@
     <Compile Include="Infrastructure\Extensions\ToViewModelExtensions.cs" />
     <Compile Include="Infrastructure\LoadTimeManager.cs" />
     <Compile Include="Infrastructure\SignalrWorker.cs" />
+    <Compile Include="Models\HistoryPageViewModel.cs" />
     <Compile Include="Models\MeasurementResultViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -220,10 +221,12 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\lessStyleSheet.less" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\indexSignalR.js" />
+    <Content Include="Scripts\lessLib.js" />
+    <Content Include="Scripts\User%27s JS\indexSignalR.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />
     <Content Include="Scripts\jquery-3.1.1.slim.js" />
@@ -240,6 +243,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\User%27s JS\indexViewJS.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -256,6 +260,8 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\_Compute_Table.cshtml" />
+    <Content Include="Views\Home\_HistoryTable.cshtml" />
+    <Content Include="Views\Home\_SitemapTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

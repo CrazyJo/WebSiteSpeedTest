@@ -17,6 +17,8 @@ namespace WebSiteSpeedTest
             bundles.Add(new ScriptBundle("~/bundles/signalR").Include(
             "~/Scripts/jquery.signalR-{version}.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/less").Include(
+            "~/Scripts/lessLib.js"));
 
             // Используйте версию Modernizr для разработчиков, чтобы учиться работать. Когда вы будете готовы перейти к работе,
             // используйте средство сборки на сайте http://modernizr.com, чтобы выбрать только нужные тесты.
