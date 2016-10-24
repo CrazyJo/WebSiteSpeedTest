@@ -76,4 +76,8 @@
                 });
         }
     });
+
+    // Ajax - Pager's handlers
+
+
 })();

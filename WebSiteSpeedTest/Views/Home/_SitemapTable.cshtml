@@ -16,13 +16,5 @@
         </div>
     }
 
-    @if (Model.PaginationEnable)
-    {
-    <div class="pagination-footer">
-        <ul class="pager">
-            <li class="disabled"><a href="#">Previous</a></li>
-            <li><a href="#">Next</a></li>
-        </ul>
-    </div>
-    }
+    @Html.Partial("_HistoryPager", Model.HistoryPager)
 </div>

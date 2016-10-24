@@ -1,0 +1,16 @@
+﻿@using WebSiteSpeedTest.Models
+@model  HistoryPagerViewModel
+
+@if (Model.EnablePagination)
+{
+    <div class="pagination-footer">
+        <ul class="pager">
+            <li @if (Model.IsFirstPage) { @Html.Raw("class=disabled")  }>
+                <a href=@Model.ActionUrl data-start-index="@Model.PreviousStartIndex">Previous</a>
+            </li>
+            <li @if (Model.IsLastPage) { @Html.Raw("class=disabled")  }>
+                <a href=@Model.ActionUrl data-start-index="@Model.NextStartIndex">Next</a>
+            </li>
+        </ul>
+    </div>
+}

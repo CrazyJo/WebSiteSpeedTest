@@ -193,6 +193,7 @@
     <Compile Include="Infrastructure\Extensions\ToViewModelExtensions.cs" />
     <Compile Include="Infrastructure\LoadTimeManager.cs" />
     <Compile Include="Infrastructure\SignalrWorker.cs" />
+    <Compile Include="Models\HistoryPagerViewModel.cs" />
     <Compile Include="Models\HistoryPageViewModel.cs" />
     <Compile Include="Models\MeasurementResultViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -243,7 +244,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\User%27s JS\indexViewJS.js" />
+    <Content Include="Scripts\User%27s JS\indexView.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -262,6 +263,7 @@
     <Content Include="Views\Home\_Compute_Table.cshtml" />
     <Content Include="Views\Home\_HistoryTable.cshtml" />
     <Content Include="Views\Home\_SitemapTable.cshtml" />
+    <Content Include="Views\Home\_HistoryPager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -50,16 +50,26 @@ namespace WebSiteSpeedTest.Controllers
             IEnumerable<SitemapRow> temp;
             using (var storage = new Committer())
             {
-                temp = storage.GetSitemap(historyRowId).TakeRange(startIndex, HistoryPageCapacity);
+                temp = storage.GetSitemap(historyRowId);
             }
 
             int rowsCount = temp.Count();
+            var enablePagination = rowsCount > HistoryPageCapacity;
+            if (enablePagination)
+                temp = temp.TakeRange(startIndex, HistoryPageCapacity);
+
             var res = new HistoryPageViewModel<SitemapRow>
             {
                 Content = temp,
-                PaginationEnable = rowsCount > HistoryPageCapacity,
-                IsLastPage = startIndex + HistoryPageCapacity > rowsCount,
-                IsFirstPage = startIndex == 0
+                HistoryPager = new HistoryPagerViewModel
+                {
+                    EnablePagination = enablePagination,
+                    IsLastPage = startIndex + HistoryPageCapacity > rowsCount,
+                    IsFirstPage = startIndex == 0,
+                    NextStartIndex = startIndex + HistoryPageCapacity,
+                    PreviousStartIndex = startIndex,
+                    ActionUrl = Url.Action("HistorySitemap")
+                }
             };
 
             return PartialView("_SitemapTable", res);

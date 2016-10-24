@@ -8,11 +8,7 @@ namespace UtilitiesPackage
     {
         public static IEnumerable<T> TakeRange<T>(this IEnumerable<T> source, int startIndex, int count)
         {
-            var t = source.Skip(startIndex);
-            var v = t.Take(count);
-
-            return v;
-            //return source.Skip(startIndex).Take(count);
+            return source.Skip(startIndex).Take(count);
         }
 
         public static void AddRange<T>(this ICollection<T> target, IEnumerable<T> source)
