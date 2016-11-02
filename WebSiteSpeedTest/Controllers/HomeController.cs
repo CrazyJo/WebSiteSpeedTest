@@ -8,12 +8,16 @@ using Core.Model;
 using Data;
 using UtilitiesPackage;
 using WebSiteSpeedTest.Models;
+using WebSiteSpeedTest.Infrastructure.Extensions;
 
 namespace WebSiteSpeedTest.Controllers
 {
     public class HomeController : Controller
     {
-        private const int HistoryPageCapacity = 25;
+        private const int HistoryPageCapacity = 2;
+        private const int SitemapPageCapacity = 25;
+
+        private readonly Committer _committer = new Committer();
 
         public ActionResult Index()
         {
@@ -35,44 +39,51 @@ namespace WebSiteSpeedTest.Controllers
 
         public ActionResult History()
         {
-            IEnumerable<HistoryRow> temp;
-            using (var storage = new Committer())
-            {
-                temp = storage.GetHistory();
-            }
-            temp = temp.OrderByDescending(i => i.Date);
-            return PartialView("_HistoryTable", temp);
+            var result = GetPartOfHistory(0);
+
+            return PartialView("_HistoryContent", result);
+        }
+
+        [HttpPost]
+        public ActionResult GetHistoryTable(int startIndex)
+        {
+            var model = GetPartOfHistory(startIndex);
+            var content = RenderHelper.PartialView(this, "_HistoryTable", model.Content);
+            var result = new HistoryPageViewModel<string> {Content = content, HistoryPager = model.HistoryPager};
+
+            return new JsonNetResult(result);
+        }
+
+        private HistoryPageViewModel<IEnumerable<HistoryRow>> GetPartOfHistory(int startIndex)
+        {
+            var temp = _committer.TakePartOfHistoryRows(startIndex, HistoryPageCapacity + 1);
+
+            return temp.GetHistoryPage(startIndex, HistoryPageCapacity, Url.Action("GetHistoryTable"));
         }
 
         [HttpPost]
         public ActionResult HistorySitemap(string historyRowId, int startIndex)
         {
-            IEnumerable<SitemapRow> temp;
-            using (var storage = new Committer())
-            {
-                temp = storage.GetSitemap(historyRowId);
-            }
+            var result = GetPartOfSitemap(historyRowId, startIndex);
 
-            int rowsCount = temp.Count();
-            var enablePagination = rowsCount > HistoryPageCapacity;
-            if (enablePagination)
-                temp = temp.TakeRange(startIndex, HistoryPageCapacity);
+            return PartialView("_SitemapContent", result);
+        }
 
-            var res = new HistoryPageViewModel<SitemapRow>
-            {
-                Content = temp,
-                HistoryPager = new HistoryPagerViewModel
-                {
-                    EnablePagination = enablePagination,
-                    IsLastPage = startIndex + HistoryPageCapacity > rowsCount,
-                    IsFirstPage = startIndex == 0,
-                    NextStartIndex = startIndex + HistoryPageCapacity,
-                    PreviousStartIndex = startIndex,
-                    ActionUrl = Url.Action("HistorySitemap")
-                }
-            };
+        [HttpPost]
+        public ActionResult GetSitemapTable(string historyRowId, int startIndex)
+        {
+            var model = GetPartOfSitemap(historyRowId, startIndex);
+            var content = RenderHelper.PartialView(this, "_SitemapTable", model.Content);
+            var result = new HistoryPageViewModel<string> { Content = content, HistoryPager = model.HistoryPager };
 
-            return PartialView("_SitemapTable", res);
+            return new JsonNetResult(result);
+        }
+
+        private HistoryPageViewModel<IEnumerable<SitemapRow>> GetPartOfSitemap(string historyRowId, int startIndex)
+        {
+            var temp = _committer.TakePartOfSitemapRows(historyRowId, startIndex, SitemapPageCapacity + 1);
+
+            return temp.GetHistoryPage(startIndex, SitemapPageCapacity, Url.Action("GetSitemapTable"), historyRowId);
         }
 
         public ActionResult About()
@@ -87,6 +98,11 @@ namespace WebSiteSpeedTest.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _committer.Dispose();
         }
     }
 }

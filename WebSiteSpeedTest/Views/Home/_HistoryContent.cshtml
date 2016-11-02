@@ -1,0 +1,12 @@
+﻿@using Core.Model
+@using WebSiteSpeedTest.Models
+@model  HistoryPageViewModel<IEnumerable<HistoryRow>>
+
+<div class="panel-group" id="accordion">
+
+    <div id="historyTable">
+        @Html.Partial("_HistoryTable", Model.Content)
+    </div>
+
+</div>
+@Html.Partial("_HistoryPager", Model.HistoryPager)

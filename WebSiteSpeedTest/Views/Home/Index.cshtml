@@ -23,7 +23,7 @@
             <img id="wait_loader" src="~/Content/Images/1 (1).gif" />
 
             @* History Button *@
-            <button id="HistoryBtn" class="btn btn-info historyBtn" data-toggle="modal" data-target="#HistoryModal" data-update-custom="#HistoryContainer" data-url=@Url.Action("History")>History</button>
+            <button id="historyBtn" class="btn btn-info historyBtn" data-toggle="modal" data-target="#historyModal" data-update-custom="#historyContainer" data-url=@Url.Action("History")>History</button>
 
         </div>
 
@@ -41,7 +41,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="HistoryModal" role="dialog">
+<div class="modal fade" id="historyModal" role="dialog">
     <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
@@ -52,7 +52,7 @@
             </div>
 
             <!-- Modal body-->
-            <div id="HistoryContainer" class="modal-body">
+            <div id="historyContainer" class="modal-body">
             </div>
         </div>
 
@@ -63,9 +63,10 @@
 @section signalR{
     @Scripts.Render("~/bundles/signalR")
     <script src="~/signalr/hubs"></script>
-    <script src="~/Scripts/User's JS/indexSignalR.js"></script>
+    <script src="~/Scripts/User's_JS/indexSignalR.js"></script>
 }
 
 @section scripts{
-    <script src="~/Scripts/User's JS/indexView.js"></script>
+    @*<script src="~/Scripts/User's_JS/indexView.js"></script>*@
+    <script src="~/Scripts/User's_JS/build/index.js"></script>
 }

@@ -1,20 +1,18 @@
 ﻿@using Core.Model
-@using WebSiteSpeedTest.Models
-@model  HistoryPageViewModel<SitemapRow>
+@model  IEnumerable<SitemapRow>
 
-<div class="panel-body">
-    @foreach (var sRow in Model.Content)
-    {
-        <div class="sitemap-row row">
-            <div class="col-md-offset-1 col-md-8">
-                <a target="_blank" href=@sRow.Url>@sRow.Url</a>
-            </div>
-            <div class="col-md-3">
-                <span class="right-offset">Min: @sRow.MinTime.TotalSeconds.ToString("N2")</span>
-                <span>Max: @sRow.MaxTime.TotalSeconds.ToString("N2")</span>
-            </div>
+@foreach (var sRow in Model)
+{
+    <div class="sitemap-row row">
+        <div class="col-md-1">
+            @sRow.Id
         </div>
-    }
-
-    @Html.Partial("_HistoryPager", Model.HistoryPager)
-</div>
+        <div class="col-md-8">
+            <a target="_blank" href=@sRow.Url>@sRow.Url</a>
+        </div>
+        <div class="col-md-3">
+            <span class="right-offset">Min: @sRow.MinTime.TotalSeconds.ToString("N2")</span>
+            <span>Max: @sRow.MaxTime.TotalSeconds.ToString("N2")</span>
+        </div>
+    </div>
+}

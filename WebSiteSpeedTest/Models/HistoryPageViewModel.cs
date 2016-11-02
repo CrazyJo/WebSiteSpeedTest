@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 
 namespace WebSiteSpeedTest.Models
 {
     public class HistoryPageViewModel<T>
     {
-        public IEnumerable<T> Content { get; set; }
+        [JsonProperty(PropertyName = "contentHistory")]
+        public T Content { get; set; }
+
+        [JsonProperty(PropertyName = "historyPager")]
         public HistoryPagerViewModel HistoryPager { get; set; }
     }
 }

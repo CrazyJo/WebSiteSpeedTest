@@ -1,15 +1,23 @@
 ﻿@using WebSiteSpeedTest.Models
+@using WebSiteSpeedTest.Infrastructure
 @model  HistoryPagerViewModel
 
 @if (Model.EnablePagination)
 {
     <div class="pagination-footer">
         <ul class="pager">
-            <li @if (Model.IsFirstPage) { @Html.Raw("class=disabled")  }>
-                <a href=@Model.ActionUrl data-start-index="@Model.PreviousStartIndex">Previous</a>
+            @{
+                string dataHisId = null;
+                if (Model.HistoryRowId!=null)
+                {
+                    dataHisId = $"data-history-row-id={Model.HistoryRowId}";
+                }
+            }
+            <li @if(Model.IsFirstPage){@Html.Raw("class=disabled")}>
+                <a href=@Model.ActionUrl @dataHisId data-role=@PagerElementRole.Previous data-start-index="@Model.PreviousStartIndex">Previous</a>
             </li>
-            <li @if (Model.IsLastPage) { @Html.Raw("class=disabled")  }>
-                <a href=@Model.ActionUrl data-start-index="@Model.NextStartIndex">Next</a>
+            <li @if(Model.IsLastPage){@Html.Raw("class=disabled")}>
+                <a  href=@Model.ActionUrl @dataHisId data-role=@PagerElementRole.Next data-start-index="@Model.NextStartIndex">Next</a>
             </li>
         </ul>
     </div>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Model;
+using UtilitiesPackage;
 
 namespace Data
 {
@@ -13,7 +14,7 @@ namespace Data
         public Committer()
         {
             IDbContextFactory db = new DbContextFactory();
-            _historyRepo  = new Repo<HistoryRow>(db);
+            _historyRepo = new Repo<HistoryRow>(db);
             _smRepo = new Repo<SitemapRow>(db);
         }
 
@@ -33,14 +34,24 @@ namespace Data
             _smRepo.AddRange(sitemapRows);
         }
 
-        public IEnumerable<HistoryRow> GetHistory()
+        public IQueryable<HistoryRow> GetHistory()
         {
-            return _historyRepo.GetAll().ToList();
+            return _historyRepo.GetAll();
         }
 
-        public IEnumerable<SitemapRow> GetSitemap(string historyRowId)
+        public IQueryable<SitemapRow> GetSitemap(string historyRowId)
         {
-            return _smRepo.Where(e => e.HistoryRowId == historyRowId);
+            return _smRepo.GetAll().Where(i => i.HistoryRowId == historyRowId);
+        }
+
+        public IList<HistoryRow> TakePartOfHistoryRows(int startIndex, int count)
+        {
+            return GetHistory().OrderBy(i => i.Id).TakeRange(startIndex, count).ToList();
+        }
+
+        public IList<SitemapRow> TakePartOfSitemapRows(string historyRowId, int startIndex, int count)
+        {
+            return GetSitemap(historyRowId).OrderBy(i => i.Id).TakeRange(startIndex, count).ToList();
         }
 
         public void Dispose()

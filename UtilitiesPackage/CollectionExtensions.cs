@@ -6,6 +6,11 @@ namespace UtilitiesPackage
 {
     public static class CollectionExtensions
     {
+        public static IQueryable<T> TakeRange<T>(this IOrderedQueryable<T> source, int startIndex, int count)
+        {
+            return source.Skip(startIndex).Take(count);
+        }
+
         public static IEnumerable<T> TakeRange<T>(this IEnumerable<T> source, int startIndex, int count)
         {
             return source.Skip(startIndex).Take(count);

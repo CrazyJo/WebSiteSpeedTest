@@ -1,0 +1,12 @@
+﻿@using Core.Model
+@using WebSiteSpeedTest.Models
+@model  HistoryPageViewModel<IEnumerable<SitemapRow>>
+
+<div class="panel-body">
+
+    <div id="sitemapTable">
+        @Html.Partial("_SitemapTable", Model.Content)
+    </div>
+
+    @Html.Partial("_HistoryPager", Model.HistoryPager)
+</div>
