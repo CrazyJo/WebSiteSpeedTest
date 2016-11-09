@@ -1,7 +1,7 @@
 ﻿(function ()
 {
     var wLoader = $("#wait_loader");
-    var sectionTabRes = $("#tableResult");
+    var sectionTabRes = $("#sectionTableResult");
 
     function ajaxQuery(type, url, data, callBackOnDone)
     {

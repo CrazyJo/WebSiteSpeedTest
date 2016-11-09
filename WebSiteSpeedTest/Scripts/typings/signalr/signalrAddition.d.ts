@@ -1,0 +1,4 @@
+﻿interface JQueryStatic
+{
+    connection: any;
+}

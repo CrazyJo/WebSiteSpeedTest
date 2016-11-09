@@ -10,9 +10,14 @@ namespace WebSiteSpeedTest.Infrastructure
         public Encoding ContentEncoding { get; set; }
         public string ContentType { get; set; }
         public object Data { get; set; }
-
+        public Type Type { get; set; }
         public JsonSerializerSettings SerializerSettings { get; set; }
         public Formatting Formatting { get; set; }
+
+        public JsonNetResult(object data, Type type) : this(data)
+        {
+            Type = type;
+        }
 
         public JsonNetResult(object data, Formatting formatting)
             : this(data)
@@ -46,7 +51,7 @@ namespace WebSiteSpeedTest.Infrastructure
 
             var writer = new JsonTextWriter(response.Output) { Formatting = Formatting };
             var serializer = JsonSerializer.Create(SerializerSettings);
-            serializer.Serialize(writer, Data);
+            serializer.Serialize(writer, Data, Type);
             writer.Flush();
         }
     }

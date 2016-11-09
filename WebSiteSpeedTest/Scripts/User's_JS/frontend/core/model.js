@@ -4,6 +4,24 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var MeasurementsViewModel = (function () {
+    function MeasurementsViewModel(model) {
+        this.results = model;
+    }
+    MeasurementsViewModel.prototype.sortModelExceptFirst = function () {
+        var first = this.results.shift();
+        this.sortModel();
+        this.results.unshift(first);
+    };
+    MeasurementsViewModel.prototype.sortModel = function () {
+        this.results.sort(function (a, b) { return a.mintime - b.mintime; });
+    };
+    MeasurementsViewModel.prototype.push = function (value) {
+        this.results.push(value);
+    };
+    return MeasurementsViewModel;
+}());
+exports.MeasurementsViewModel = MeasurementsViewModel;
 var HistoryAjaxData = (function () {
     function HistoryAjaxData(startIndex) {
         this.startIndex = startIndex;
@@ -11,6 +29,12 @@ var HistoryAjaxData = (function () {
     return HistoryAjaxData;
 }());
 exports.HistoryAjaxData = HistoryAjaxData;
+var MeasurementResult = (function () {
+    function MeasurementResult() {
+    }
+    return MeasurementResult;
+}());
+exports.MeasurementResult = MeasurementResult;
 var SitemapAjaxData = (function (_super) {
     __extends(SitemapAjaxData, _super);
     function SitemapAjaxData(startIndex, rowId) {

@@ -20,17 +20,26 @@
     margin-left: 15px;
 }
 
-#tableResult {
-    display: none;
-}
-
 .historyBtn {
     position: fixed;
     top: 78px;
     right: 50px;
 }
 
+#chartContainer {
+    margin: 0 auto;
+    width: 90%;
+    height: 450px;
+}
 
+#tableContainer {
+    display: none;
+}
+
+    #tableContainer table > tbody > tr:nth-child(2) {
+        background-color: rgb(217, 237, 247);
+        margin-bottom: 3px;
+    }
 
 
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
+using System.Xml;
 using Core.Model;
 using Data;
 using UtilitiesPackage;
@@ -42,7 +43,7 @@ namespace WebSiteSpeedTest.Infrastructure
             stopwatch.Stop();
             stopwatch.Restart();
 
-            await loc.Take(1000).ForEachAsync(10, TestAndDisplay);
+            await loc.Take(10).ForEachAsync(10, TestAndDisplay);
             //await loc.Take(100).ForEach(TestAndDisplay);
             stopwatch.Stop();
 
@@ -108,10 +109,12 @@ namespace WebSiteSpeedTest.Infrastructure
             var xmlDocs = await SitemapWorker.FindSitemap(url);
             var list = new List<string>();
 
-            foreach (var doc in xmlDocs)
-            {
-                list.AddRange(await SitemapWorker.ParseSitemapFile(doc));
-            }
+            //todo: hardcode, remove First()
+            list.AddRange(await SitemapWorker.ParseSitemapFile(xmlDocs.First()));
+            //foreach (XmlDocument doc in xmlDocs)
+            //{
+            //    list.AddRange(await SitemapWorker.ParseSitemapFile(doc));
+            //}
 
             return list;
         }

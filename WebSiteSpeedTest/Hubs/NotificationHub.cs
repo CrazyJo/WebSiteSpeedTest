@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using Core.Model;
+using Microsoft.AspNet.SignalR;
+using WebSiteSpeedTest.Models;
 
 namespace WebSiteSpeedTest.Hubs
 {

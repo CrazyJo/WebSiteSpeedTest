@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Core.Json;
 using WebSiteSpeedTest.Infrastructure;
 using Core.Model;
 using Data;
+using Newtonsoft.Json;
 using UtilitiesPackage;
 using WebSiteSpeedTest.Models;
 using WebSiteSpeedTest.Infrastructure.Extensions;
@@ -14,7 +16,7 @@ namespace WebSiteSpeedTest.Controllers
 {
     public class HomeController : Controller
     {
-        private const int HistoryPageCapacity = 2;
+        private const int HistoryPageCapacity = 10;
         private const int SitemapPageCapacity = 25;
 
         private readonly Committer _committer = new Committer();
@@ -34,7 +36,15 @@ namespace WebSiteSpeedTest.Controllers
                 vModel = await ltManager.MeasureAsync(url);
             }
 
-            return PartialView("_Compute_Table", vModel.OrderByDescending(e => e.MinTime));
+            return new JsonNetResult(vModel.OrderByDescending(e => e.MinTime))
+            {
+                SerializerSettings = new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    ContractResolver = new TypeOnlyContractResolver<MeasurementResult>(),
+                    Converters = new List<JsonConverter> { new TimeSpanToTotalSecondsConverter() }
+                }
+            };
         }
 
         public ActionResult History()

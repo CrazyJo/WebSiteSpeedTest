@@ -1,48 +1,59 @@
 ﻿/// <reference path="../../typings/jquery/jquery.d.ts" />
 
-import {Ajax} from "./infrastructure/ajax"
+import { Ajax } from "./infrastructure/ajax"
 import * as Enums from "./infrastructure/enums";
 import { Initializer } from "./infrastructure/initializer"
+import * as Model from "./core/model"
+import { Displayer } from "./graphics/displayer"
+import { Notifier } from "./infrastructure/signalR"
 
 $(document)
     .ready(() =>
     {
+        debugger;
         let wLoader = $("#wait_loader");
-        let sectionTabRes = $("#tableResult");
+
+        let disolayer = new Displayer("#chartContainer", "#tableContainer");
+
+        let notifier = new Notifier((m) =>
+        {
+            disolayer.visualize(m);
+        });
 
         $("#ajaxComputeLink")
-            .click(function()
+            .click(function (event)
             {
+                event.preventDefault();
                 wLoader.show();
-                sectionTabRes.show();
-                $("#outPutTB").html("<tr><th>Url</th><th>Min (s)</th><th>Max (s)</th></tr>");
+                disolayer.clean();
+
                 let ajMeth = $(this).attr('data-ajax-method');
                 let tUrl = $(this).attr('href');
                 let inputData = $("#input_url").val();
 
                 $.ajax({
-                        type: ajMeth,
-                        url: tUrl,
-                        data: { url: inputData }
-                    })
-                    .then(e =>
+                    type: ajMeth,
+                    url: tUrl,
+                    data: { url: inputData }
+                })
+                    .then((e: Array<Model.MeasurementResult>) =>
                     {
                         wLoader.hide();
-
-                        //$("#outPut").html(e);
+                        disolayer.sortAndDisplay();
                     });
-                return false;
+
+                disolayer.show();
             });
 
         $("#historyBtn")
-            .click(function()
+            .click(function ()
             {
                 let updateTarget: string = $(this).attr('data-update-custom');
                 let el = $(updateTarget);
                 $.ajax({
-                        type: $(this).attr('data-ajax-method'),
-                        url: $(this).attr('data-url')
-                    })
+                    type: $(this).attr('data-ajax-method'),
+                    url: $(this).attr('data-url')
+                })
                     .then(e =>
                     {
                         el.html(e);

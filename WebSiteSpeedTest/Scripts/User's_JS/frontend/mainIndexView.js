@@ -3,15 +3,21 @@
 var ajax_1 = require("./infrastructure/ajax");
 var Enums = require("./infrastructure/enums");
 var initializer_1 = require("./infrastructure/initializer");
+var displayer_1 = require("./graphics/displayer");
+var signalR_1 = require("./infrastructure/signalR");
 $(document)
     .ready(function () {
+    debugger;
     var wLoader = $("#wait_loader");
-    var sectionTabRes = $("#tableResult");
+    var disolayer = new displayer_1.Displayer("#chartContainer", "#tableContainer");
+    var notifier = new signalR_1.Notifier(function (m) {
+        disolayer.visualize(m);
+    });
     $("#ajaxComputeLink")
-        .click(function () {
+        .click(function (event) {
+        event.preventDefault();
         wLoader.show();
-        sectionTabRes.show();
-        $("#outPutTB").html("<tr><th>Url</th><th>Min (s)</th><th>Max (s)</th></tr>");
+        disolayer.clean();
         var ajMeth = $(this).attr('data-ajax-method');
         var tUrl = $(this).attr('href');
         var inputData = $("#input_url").val();
@@ -22,9 +28,9 @@ $(document)
         })
             .then(function (e) {
             wLoader.hide();
-            //$("#outPut").html(e);
+            disolayer.sortAndDisplay();
         });
-        return false;
+        disolayer.show();
     });
     $("#historyBtn")
         .click(function () {

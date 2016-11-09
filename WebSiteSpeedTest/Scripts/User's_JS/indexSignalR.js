@@ -1,6 +1,5 @@
 ﻿$(function ()
 {
-
     var notificationhub = $.connection.notificationHub;
 
     notificationhub.client.displayMessage = function (message)
@@ -14,5 +13,4 @@
     {
         return "<tr><td>" + url + "</td><td>" + min + "</td><td>" + max + "</td></tr>";
     }
-
 });

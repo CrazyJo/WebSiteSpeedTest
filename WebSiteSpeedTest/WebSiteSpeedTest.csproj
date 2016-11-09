@@ -242,6 +242,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\lessStyleSheet.less" />
+    <Content Include="Scripts\plotly-latest.min.js" />
     <Content Include="Scripts\User%27s_JS\build\index.js" />
     <Content Include="webpack.config.js" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
@@ -314,11 +315,21 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\node\node.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\plotly.js\plotly.js.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\signalr\signalrAddition.d.ts" />
     <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\core\model.ts" />
+    <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\graphics\chartDisplayer.ts" />
+    <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\graphics\elementDisplayer.ts" />
+    <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\graphics\tableDisplayer.ts" />
+    <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\graphics\tableMaker.ts" />
     <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\infrastructure\ajax.ts" />
+    <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\graphics\chart.ts" />
+    <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\graphics\displayer.ts" />
     <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\infrastructure\enums.ts" />
     <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\infrastructure\handlers.ts" />
     <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\infrastructure\initializer.ts" />
+    <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\infrastructure\signalR.ts" />
     <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\infrastructure\view.ts" />
     <TypeScriptCompile Include="Scripts\User%27s_JS\frontend\mainIndexView.ts" />
   </ItemGroup>

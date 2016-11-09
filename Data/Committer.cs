@@ -46,7 +46,7 @@ namespace Data
 
         public IList<HistoryRow> TakePartOfHistoryRows(int startIndex, int count)
         {
-            return GetHistory().OrderBy(i => i.Id).TakeRange(startIndex, count).ToList();
+            return GetHistory().OrderByDescending(i => i.Date).TakeRange(startIndex, count).ToList();
         }
 
         public IList<SitemapRow> TakePartOfSitemapRows(string historyRowId, int startIndex, int count)

@@ -44,43 +44,907 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("/// <reference path=\"../../typings/jquery/jquery.d.ts\" />\r\n\"use strict\";\r\nvar ajax_1 = __webpack_require__(1);\r\nvar Enums = __webpack_require__(2);\r\nvar initializer_1 = __webpack_require__(3);\r\n$(document)\r\n    .ready(function () {\r\n    var wLoader = $(\"#wait_loader\");\r\n    var sectionTabRes = $(\"#tableResult\");\r\n    $(\"#ajaxComputeLink\")\r\n        .click(function () {\r\n        wLoader.show();\r\n        sectionTabRes.show();\r\n        $(\"#outPutTB\").html(\"<tr><th>Url</th><th>Min (s)</th><th>Max (s)</th></tr>\");\r\n        var ajMeth = $(this).attr('data-ajax-method');\r\n        var tUrl = $(this).attr('href');\r\n        var inputData = $(\"#input_url\").val();\r\n        $.ajax({\r\n            type: ajMeth,\r\n            url: tUrl,\r\n            data: { url: inputData }\r\n        })\r\n            .then(function (e) {\r\n            wLoader.hide();\r\n            //$(\"#outPut\").html(e);\r\n        });\r\n        return false;\r\n    });\r\n    $(\"#historyBtn\")\r\n        .click(function () {\r\n        var updateTarget = $(this).attr('data-update-custom');\r\n        var el = $(updateTarget);\r\n        $.ajax({\r\n            type: $(this).attr('data-ajax-method'),\r\n            url: $(this).attr('data-url')\r\n        })\r\n            .then(function (e) {\r\n            el.html(e);\r\n            // find pager's btn and set handlers\r\n            initializer_1.Initializer.pagerInit(updateTarget + \" ul.pager a\", \"#historyTable\");\r\n        });\r\n    });\r\n    var historyConteiner = document.querySelector(\"#historyContainer\");\r\n    historyConteiner.addEventListener(\"click\", function (arg) {\r\n        var eventSource = $(arg.target);\r\n        if (eventSource.is(\"a\") &&\r\n            eventSource.attr(\"data-toggle\") === \"collapse\" &&\r\n            eventSource.attr(\"data-switch\") === \"true\") {\r\n            var rowId_1 = eventSource.attr('href');\r\n            var uri = eventSource.attr('data-url');\r\n            ajax_1.Ajax.run(Enums.HttpMethod.POST, uri, {\r\n                historyRowId: rowId_1.slice(1),\r\n                startIndex: 0\r\n            }, function (siteMap) {\r\n                $(rowId_1).html(siteMap);\r\n                eventSource.attr(\"data-switch\", \"false\");\r\n                // find pager's btn and set handlers\r\n                initializer_1.Initializer.pagerInit(rowId_1 + \" ul.pager a\", \"#sitemapTable\");\r\n            });\r\n        }\r\n        arg.preventDefault();\r\n    });\r\n});\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMC5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL21haW5JbmRleFZpZXcudHM/MDdiZSJdLCJzb3VyY2VzQ29udGVudCI6WyIvLy8gPHJlZmVyZW5jZSBwYXRoPVwiLi4vLi4vdHlwaW5ncy9qcXVlcnkvanF1ZXJ5LmQudHNcIiAvPlxyXG5cclxuaW1wb3J0IHtBamF4fSBmcm9tIFwiLi9pbmZyYXN0cnVjdHVyZS9hamF4XCJcclxuaW1wb3J0ICogYXMgRW51bXMgZnJvbSBcIi4vaW5mcmFzdHJ1Y3R1cmUvZW51bXNcIjtcclxuaW1wb3J0IHsgSW5pdGlhbGl6ZXIgfSBmcm9tIFwiLi9pbmZyYXN0cnVjdHVyZS9pbml0aWFsaXplclwiXHJcblxyXG4kKGRvY3VtZW50KVxyXG4gICAgLnJlYWR5KCgpID0+XHJcbiAgICB7XHJcbiAgICAgICAgbGV0IHdMb2FkZXIgPSAkKFwiI3dhaXRfbG9hZGVyXCIpO1xyXG4gICAgICAgIGxldCBzZWN0aW9uVGFiUmVzID0gJChcIiN0YWJsZVJlc3VsdFwiKTtcclxuXHJcbiAgICAgICAgJChcIiNhamF4Q29tcHV0ZUxpbmtcIilcclxuICAgICAgICAgICAgLmNsaWNrKGZ1bmN0aW9uKClcclxuICAgICAgICAgICAge1xyXG4gICAgICAgICAgICAgICAgd0xvYWRlci5zaG93KCk7XHJcbiAgICAgICAgICAgICAgICBzZWN0aW9uVGFiUmVzLnNob3coKTtcclxuICAgICAgICAgICAgICAgICQoXCIjb3V0UHV0VEJcIikuaHRtbChcIjx0cj48dGg+VXJsPC90aD48dGg+TWluIChzKTwvdGg+PHRoPk1heCAocyk8L3RoPjwvdHI+XCIpO1xyXG4gICAgICAgICAgICAgICAgbGV0IGFqTWV0aCA9ICQodGhpcykuYXR0cignZGF0YS1hamF4LW1ldGhvZCcpO1xyXG4gICAgICAgICAgICAgICAgbGV0IHRVcmwgPSAkKHRoaXMpLmF0dHIoJ2hyZWYnKTtcclxuICAgICAgICAgICAgICAgIGxldCBpbnB1dERhdGEgPSAkKFwiI2lucHV0X3VybFwiKS52YWwoKTtcclxuXHJcbiAgICAgICAgICAgICAgICAkLmFqYXgoe1xyXG4gICAgICAgICAgICAgICAgICAgICAgICB0eXBlOiBhak1ldGgsXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHVybDogdFVybCxcclxuICAgICAgICAgICAgICAgICAgICAgICAgZGF0YTogeyB1cmw6IGlucHV0RGF0YSB9XHJcbiAgICAgICAgICAgICAgICAgICAgfSlcclxuICAgICAgICAgICAgICAgICAgICAudGhlbihlID0+XHJcbiAgICAgICAgICAgICAgICAgICAge1xyXG4gICAgICAgICAgICAgICAgICAgICAgICB3TG9hZGVyLmhpZGUoKTtcclxuXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIC8vJChcIiNvdXRQdXRcIikuaHRtbChlKTtcclxuICAgICAgICAgICAgICAgICAgICB9KTtcclxuICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTtcclxuICAgICAgICAgICAgfSk7XHJcblxyXG4gICAgICAgICQoXCIjaGlzdG9yeUJ0blwiKVxyXG4gICAgICAgICAgICAuY2xpY2soZnVuY3Rpb24oKVxyXG4gICAgICAgICAgICB7XHJcbiAgICAgICAgICAgICAgICBsZXQgdXBkYXRlVGFyZ2V0OiBzdHJpbmcgPSAkKHRoaXMpLmF0dHIoJ2RhdGEtdXBkYXRlLWN1c3RvbScpO1xyXG4gICAgICAgICAgICAgICAgbGV0IGVsID0gJCh1cGRhdGVUYXJnZXQpO1xyXG4gICAgICAgICAgICAgICAgJC5hamF4KHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgdHlwZTogJCh0aGlzKS5hdHRyKCdkYXRhLWFqYXgtbWV0aG9kJyksXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHVybDogJCh0aGlzKS5hdHRyKCdkYXRhLXVybCcpXHJcbiAgICAgICAgICAgICAgICAgICAgfSlcclxuICAgICAgICAgICAgICAgICAgICAudGhlbihlID0+XHJcbiAgICAgICAgICAgICAgICAgICAge1xyXG4gICAgICAgICAgICAgICAgICAgICAgICBlbC5odG1sKGUpO1xyXG5cclxuICAgICAgICAgICAgICAgICAgICAgICAgLy8gZmluZCBwYWdlcidzIGJ0biBhbmQgc2V0IGhhbmRsZXJzXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIEluaXRpYWxpemVyLnBhZ2VySW5pdCh1cGRhdGVUYXJnZXQgKyBcIiB1bC5wYWdlciBhXCIsIFwiI2hpc3RvcnlUYWJsZVwiKTtcclxuICAgICAgICAgICAgICAgICAgICB9KTtcclxuICAgICAgICAgICAgfSk7XHJcblxyXG4gICAgICAgIGxldCBoaXN0b3J5Q29udGVpbmVyID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcihcIiNoaXN0b3J5Q29udGFpbmVyXCIpO1xyXG4gICAgICAgIGhpc3RvcnlDb250ZWluZXIuYWRkRXZlbnRMaXN0ZW5lcihcImNsaWNrXCIsXHJcbiAgICAgICAgICAgIChhcmc6IE1vdXNlRXZlbnQpID0+XHJcbiAgICAgICAgICAgIHtcclxuICAgICAgICAgICAgICAgIGxldCBldmVudFNvdXJjZSA9ICQoYXJnLnRhcmdldCk7XHJcblxyXG4gICAgICAgICAgICAgICAgaWYgKGV2ZW50U291cmNlLmlzKFwiYVwiKSAmJlxyXG4gICAgICAgICAgICAgICAgICAgIGV2ZW50U291cmNlLmF0dHIoXCJkYXRhLXRvZ2dsZVwiKSA9PT0gXCJjb2xsYXBzZVwiICYmXHJcbiAgICAgICAgICAgICAgICAgICAgZXZlbnRTb3VyY2UuYXR0cihcImRhdGEtc3dpdGNoXCIpID09PSBcInRydWVcIilcclxuICAgICAgICAgICAgICAgIHtcclxuICAgICAgICAgICAgICAgICAgICBsZXQgcm93SWQgPSBldmVudFNvdXJjZS5hdHRyKCdocmVmJyk7XHJcbiAgICAgICAgICAgICAgICAgICAgbGV0IHVyaSA9IGV2ZW50U291cmNlLmF0dHIoJ2RhdGEtdXJsJyk7XHJcbiAgICAgICAgICAgICAgICAgICAgQWpheC5ydW4oRW51bXMuSHR0cE1ldGhvZC5QT1NULFxyXG4gICAgICAgICAgICAgICAgICAgICAgICB1cmksXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIGhpc3RvcnlSb3dJZDogcm93SWQuc2xpY2UoMSksXHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdGFydEluZGV4OiAwXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIH0sXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIChzaXRlTWFwOiBzdHJpbmcpID0+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHtcclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICQocm93SWQpLmh0bWwoc2l0ZU1hcCk7XHJcblxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgZXZlbnRTb3VyY2UuYXR0cihcImRhdGEtc3dpdGNoXCIsIFwiZmFsc2VcIik7XHJcblxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgLy8gZmluZCBwYWdlcidzIGJ0biBhbmQgc2V0IGhhbmRsZXJzXHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICBJbml0aWFsaXplci5wYWdlckluaXQocm93SWQgKyBcIiB1bC5wYWdlciBhXCIsIFwiI3NpdGVtYXBUYWJsZVwiKTtcclxuICAgICAgICAgICAgICAgICAgICAgICAgfSk7XHJcbiAgICAgICAgICAgICAgICB9XHJcbiAgICAgICAgICAgICAgICBhcmcucHJldmVudERlZmF1bHQoKTtcclxuICAgICAgICAgICAgfSk7XHJcbiAgICB9KTtcclxuXHJcblxuXG5cbi8vIFdFQlBBQ0sgRk9PVEVSIC8vXG4vLyAuL21haW5JbmRleFZpZXcudHMiXSwibWFwcGluZ3MiOiJBQUFBOztBQUVBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFFQTtBQUNBO0FBRUE7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUVBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBRUE7QUFDQTtBQUdBO0FBRUE7QUFDQTtBQUNBO0FBRUE7QUFDQTtBQUNBO0FBR0E7QUFDQTtBQUNBO0FBR0E7QUFFQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOyIsInNvdXJjZVJvb3QiOiIifQ==");
+	/// <reference path="../../typings/jquery/jquery.d.ts" />
+	"use strict";
+	var ajax_1 = __webpack_require__(1);
+	var Enums = __webpack_require__(2);
+	var initializer_1 = __webpack_require__(3);
+	var displayer_1 = __webpack_require__(7);
+	var signalR_1 = __webpack_require__(13);
+	$(document)
+	    .ready(function () {
+	    debugger;
+	    var wLoader = $("#wait_loader");
+	    var disolayer = new displayer_1.Displayer("#chartContainer", "#tableContainer");
+	    var notifier = new signalR_1.Notifier(function (m) {
+	        disolayer.visualize(m);
+	    });
+	    $("#ajaxComputeLink")
+	        .click(function (event) {
+	        event.preventDefault();
+	        wLoader.show();
+	        disolayer.clean();
+	        var ajMeth = $(this).attr('data-ajax-method');
+	        var tUrl = $(this).attr('href');
+	        var inputData = $("#input_url").val();
+	        $.ajax({
+	            type: ajMeth,
+	            url: tUrl,
+	            data: { url: inputData }
+	        })
+	            .then(function (e) {
+	            wLoader.hide();
+	            disolayer.sortAndDisplay();
+	        });
+	        disolayer.show();
+	    });
+	    $("#historyBtn")
+	        .click(function () {
+	        var updateTarget = $(this).attr('data-update-custom');
+	        var el = $(updateTarget);
+	        $.ajax({
+	            type: $(this).attr('data-ajax-method'),
+	            url: $(this).attr('data-url')
+	        })
+	            .then(function (e) {
+	            el.html(e);
+	            // find pager's btn and set handlers
+	            initializer_1.Initializer.pagerInit(updateTarget + " ul.pager a", "#historyTable");
+	        });
+	    });
+	    var historyConteiner = document.querySelector("#historyContainer");
+	    historyConteiner.addEventListener("click", function (arg) {
+	        var eventSource = $(arg.target);
+	        if (eventSource.is("a") &&
+	            eventSource.attr("data-toggle") === "collapse" &&
+	            eventSource.attr("data-switch") === "true") {
+	            var rowId_1 = eventSource.attr('href');
+	            var uri = eventSource.attr('data-url');
+	            ajax_1.Ajax.run(Enums.HttpMethod.POST, uri, {
+	                historyRowId: rowId_1.slice(1),
+	                startIndex: 0
+	            }, function (siteMap) {
+	                $(rowId_1).html(siteMap);
+	                eventSource.attr("data-switch", "false");
+	                // find pager's btn and set handlers
+	                initializer_1.Initializer.pagerInit(rowId_1 + " ul.pager a", "#sitemapTable");
+	            });
+	        }
+	        arg.preventDefault();
+	    });
+	});
+	
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("/// <reference path=\"../../../typings/jquery/jquery.d.ts\" />\r\n\"use strict\";\r\nvar Enums = __webpack_require__(2);\r\nvar Ajax = (function () {\r\n    function Ajax() {\r\n    }\r\n    Ajax.run = function (httpMethodType, url, data, callBackOnDone) {\r\n        $.ajax({\r\n            type: Enums.HttpMethod[httpMethodType],\r\n            url: url,\r\n            data: data\r\n        })\r\n            .done(callBackOnDone);\r\n    };\r\n    return Ajax;\r\n}());\r\nexports.Ajax = Ajax;\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMS5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2luZnJhc3RydWN0dXJlL2FqYXgudHM/NzdkYSJdLCJzb3VyY2VzQ29udGVudCI6WyIvLy8gPHJlZmVyZW5jZSBwYXRoPVwiLi4vLi4vLi4vdHlwaW5ncy9qcXVlcnkvanF1ZXJ5LmQudHNcIiAvPlxyXG5cclxuaW1wb3J0ICogYXMgRW51bXMgZnJvbSBcIi4vZW51bXNcIjtcclxuXHJcbmV4cG9ydCBjbGFzcyBBamF4XHJcbntcclxuICAgIHN0YXRpYyBydW48VCwgVERvbmVFdmVudEFyZz4oaHR0cE1ldGhvZFR5cGU6IEVudW1zLkh0dHBNZXRob2QsXHJcbiAgICAgICAgdXJsOiBzdHJpbmcsXHJcbiAgICAgICAgZGF0YTogVCxcclxuICAgICAgICBjYWxsQmFja09uRG9uZTogSlF1ZXJ5UHJvbWlzZUNhbGxiYWNrPFREb25lRXZlbnRBcmc+KVxyXG4gICAge1xyXG4gICAgICAgICQuYWpheCh7XHJcbiAgICAgICAgICAgIHR5cGU6IEVudW1zLkh0dHBNZXRob2RbaHR0cE1ldGhvZFR5cGVdLFxyXG4gICAgICAgICAgICB1cmw6IHVybCxcclxuICAgICAgICAgICAgZGF0YTogZGF0YVxyXG4gICAgICAgIH0pXHJcbiAgICAgICAgICAgIC5kb25lKGNhbGxCYWNrT25Eb25lKTtcclxuICAgIH1cclxufVxuXG5cbi8vIFdFQlBBQ0sgRk9PVEVSIC8vXG4vLyAuL2luZnJhc3RydWN0dXJlL2FqYXgudHMiXSwibWFwcGluZ3MiOiJBQUFBOztBQUVBO0FBRUE7QUFBQTtBQWNBO0FBWkE7QUFLQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUFkQTsiLCJzb3VyY2VSb290IjoiIn0=");
+	/// <reference path="../../../typings/jquery/jquery.d.ts" />
+	"use strict";
+	var Enums = __webpack_require__(2);
+	var Ajax = (function () {
+	    function Ajax() {
+	    }
+	    Ajax.run = function (httpMethodType, url, data, callBackOnDone) {
+	        $.ajax({
+	            type: Enums.HttpMethod[httpMethodType],
+	            url: url,
+	            data: data
+	        })
+	            .done(callBackOnDone);
+	    };
+	    return Ajax;
+	}());
+	exports.Ajax = Ajax;
+	
 
 /***/ },
 /* 2 */
 /***/ function(module, exports) {
 
-	eval("\"use strict\";\r\n(function (HttpMethod) {\r\n    HttpMethod[HttpMethod[\"GET\"] = 0] = \"GET\";\r\n    HttpMethod[HttpMethod[\"POST\"] = 1] = \"POST\";\r\n    HttpMethod[HttpMethod[\"PUT\"] = 2] = \"PUT\";\r\n    HttpMethod[HttpMethod[\"DELETE\"] = 3] = \"DELETE\";\r\n})(exports.HttpMethod || (exports.HttpMethod = {}));\r\nvar HttpMethod = exports.HttpMethod;\r\n(function (PagerElementRole) {\r\n    PagerElementRole[PagerElementRole[\"First\"] = 1] = \"First\";\r\n    PagerElementRole[PagerElementRole[\"Next\"] = 2] = \"Next\";\r\n    PagerElementRole[PagerElementRole[\"Previous\"] = 3] = \"Previous\";\r\n    PagerElementRole[PagerElementRole[\"Last\"] = 4] = \"Last\";\r\n})(exports.PagerElementRole || (exports.PagerElementRole = {}));\r\nvar PagerElementRole = exports.PagerElementRole;\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMi5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2luZnJhc3RydWN0dXJlL2VudW1zLnRzP2RiZWMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gSHR0cE1ldGhvZFxyXG57XHJcbiAgICBHRVQsXHJcbiAgICBQT1NULFxyXG4gICAgUFVULFxyXG4gICAgREVMRVRFXHJcbn1cclxuXHJcbmV4cG9ydCBlbnVtIFBhZ2VyRWxlbWVudFJvbGVcclxue1xyXG4gICAgRmlyc3QgPSAxLFxyXG4gICAgTmV4dCxcclxuICAgIFByZXZpb3VzLFxyXG4gICAgTGFzdFxyXG59XG5cblxuLy8gV0VCUEFDSyBGT09URVIgLy9cbi8vIC4vaW5mcmFzdHJ1Y3R1cmUvZW51bXMudHMiXSwibWFwcGluZ3MiOiI7QUFBQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFOQTtBQVFBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQU5BOyIsInNvdXJjZVJvb3QiOiIifQ==");
+	"use strict";
+	(function (HttpMethod) {
+	    HttpMethod[HttpMethod["GET"] = 0] = "GET";
+	    HttpMethod[HttpMethod["POST"] = 1] = "POST";
+	    HttpMethod[HttpMethod["PUT"] = 2] = "PUT";
+	    HttpMethod[HttpMethod["DELETE"] = 3] = "DELETE";
+	})(exports.HttpMethod || (exports.HttpMethod = {}));
+	var HttpMethod = exports.HttpMethod;
+	(function (PagerElementRole) {
+	    PagerElementRole[PagerElementRole["First"] = 1] = "First";
+	    PagerElementRole[PagerElementRole["Next"] = 2] = "Next";
+	    PagerElementRole[PagerElementRole["Previous"] = 3] = "Previous";
+	    PagerElementRole[PagerElementRole["Last"] = 4] = "Last";
+	})(exports.PagerElementRole || (exports.PagerElementRole = {}));
+	var PagerElementRole = exports.PagerElementRole;
+	
 
 /***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("\"use strict\";\r\nvar handlers_1 = __webpack_require__(4);\r\nvar View = __webpack_require__(6);\r\nvar Initializer = (function () {\r\n    function Initializer() {\r\n    }\r\n    Initializer.pagerInit = function (selector, updateTarget) {\r\n        // find pager's btn and set handlers\r\n        var pager;\r\n        try {\r\n            pager = new View.Pager(selector);\r\n        }\r\n        catch (e) {\r\n            return;\r\n        }\r\n        var pagerAjax = new handlers_1.PagerAjaxHandler(pager, updateTarget);\r\n        pager.nextBtn.click = function () {\r\n            pagerAjax.sendAjaxRequest(pager.nextBtn);\r\n        };\r\n        pager.previousBtn.click = function () {\r\n            pagerAjax.sendAjaxRequest(pager.previousBtn);\r\n        };\r\n    };\r\n    return Initializer;\r\n}());\r\nexports.Initializer = Initializer;\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiMy5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2luZnJhc3RydWN0dXJlL2luaXRpYWxpemVyLnRzPzRkMzkiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgUGFnZXJBamF4SGFuZGxlciB9IGZyb20gXCIuL2hhbmRsZXJzXCI7XHJcbmltcG9ydCAqIGFzIFZpZXcgZnJvbSBcIi4vdmlld1wiO1xyXG5cclxuZXhwb3J0IGNsYXNzIEluaXRpYWxpemVyIHtcclxuICAgXHJcbiAgICBzdGF0aWMgcGFnZXJJbml0KHNlbGVjdG9yOiBzdHJpbmcsIHVwZGF0ZVRhcmdldDogc3RyaW5nKVxyXG4gICAge1xyXG4gICAgICAgIC8vIGZpbmQgcGFnZXIncyBidG4gYW5kIHNldCBoYW5kbGVyc1xyXG4gICAgICAgIGxldCBwYWdlcjogVmlldy5QYWdlcjtcclxuICAgICAgICB0cnlcclxuICAgICAgICB7XHJcbiAgICAgICAgICAgIHBhZ2VyID0gbmV3IFZpZXcuUGFnZXIoc2VsZWN0b3IpO1xyXG4gICAgICAgIH1cclxuICAgICAgICBjYXRjaCAoZSlcclxuICAgICAgICB7XHJcbiAgICAgICAgICAgIHJldHVybjtcclxuICAgICAgICB9XHJcblxyXG4gICAgICAgIGxldCBwYWdlckFqYXggPSBuZXcgUGFnZXJBamF4SGFuZGxlcihwYWdlciwgdXBkYXRlVGFyZ2V0KTtcclxuICAgICAgICBwYWdlci5uZXh0QnRuLmNsaWNrID0gKCkgPT5cclxuICAgICAgICB7XHJcbiAgICAgICAgICAgIHBhZ2VyQWpheC5zZW5kQWpheFJlcXVlc3QocGFnZXIubmV4dEJ0bik7XHJcbiAgICAgICAgfTtcclxuXHJcbiAgICAgICAgcGFnZXIucHJldmlvdXNCdG4uY2xpY2sgPSAoKSA9PlxyXG4gICAgICAgIHtcclxuICAgICAgICAgICAgcGFnZXJBamF4LnNlbmRBamF4UmVxdWVzdChwYWdlci5wcmV2aW91c0J0bik7XHJcbiAgICAgICAgfTtcclxuICAgIH1cclxufVxuXG5cbi8vIFdFQlBBQ0sgRk9PVEVSIC8vXG4vLyAuL2luZnJhc3RydWN0dXJlL2luaXRpYWxpemVyLnRzIl0sIm1hcHBpbmdzIjoiO0FBQUE7QUFDQTtBQUVBO0FBQUE7QUEwQkE7QUF4QkE7QUFFQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBRUE7QUFDQTtBQUVBO0FBQ0E7QUFFQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQUE7QUExQkE7Iiwic291cmNlUm9vdCI6IiJ9");
+	"use strict";
+	var handlers_1 = __webpack_require__(4);
+	var View = __webpack_require__(6);
+	var Initializer = (function () {
+	    function Initializer() {
+	    }
+	    Initializer.pagerInit = function (selector, updateTarget) {
+	        // find pager's btn and set handlers
+	        var pager;
+	        try {
+	            pager = new View.Pager(selector);
+	        }
+	        catch (e) {
+	            return;
+	        }
+	        var pagerAjax = new handlers_1.PagerAjaxHandler(pager, updateTarget);
+	        pager.nextBtn.click = function () {
+	            pagerAjax.sendAjaxRequest(pager.nextBtn);
+	        };
+	        pager.previousBtn.click = function () {
+	            pagerAjax.sendAjaxRequest(pager.previousBtn);
+	        };
+	    };
+	    return Initializer;
+	}());
+	exports.Initializer = Initializer;
+	
 
 /***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("\"use strict\";\r\nvar Model = __webpack_require__(5);\r\nvar ajax_1 = __webpack_require__(1);\r\nvar Enums = __webpack_require__(2);\r\nvar PagerAjaxHandler = (function () {\r\n    function PagerAjaxHandler(pager, updateTarget) {\r\n        this.pager = pager;\r\n        this.updateTarget = updateTarget;\r\n    }\r\n    PagerAjaxHandler.prototype.sendAjaxRequest = function (pagerBtn) {\r\n        var _this = this;\r\n        if (!pagerBtn.isEnabled)\r\n            return;\r\n        var ajaxData;\r\n        if (!pagerBtn.rowId)\r\n            ajaxData = new Model.HistoryAjaxData(pagerBtn.startIndex);\r\n        else\r\n            ajaxData = { historyRowId: pagerBtn.rowId, startIndex: pagerBtn.startIndex };\r\n        //ajaxData = new Model.SitemapAjaxData(pagerBtn.startIndex, pagerBtn.rowId);\r\n        ajax_1.Ajax.run(Enums.HttpMethod.POST, pagerBtn.url, ajaxData, function (newPage) {\r\n            $(_this.updateTarget).html(newPage.contentHistory);\r\n            _this.pagerBtnStyleToggle(newPage);\r\n        });\r\n    };\r\n    PagerAjaxHandler.prototype.pagerBtnStyleToggle = function (model) {\r\n        this.pager.previousBtn.startIndex = model.historyPager.previousStartIndex;\r\n        this.pager.previousBtn.isEnabled = !model.historyPager.isFirstPage;\r\n        this.pager.nextBtn.startIndex = model.historyPager.nextStartIndex;\r\n        this.pager.nextBtn.isEnabled = !model.historyPager.isLastPage;\r\n    };\r\n    return PagerAjaxHandler;\r\n}());\r\nexports.PagerAjaxHandler = PagerAjaxHandler;\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiNC5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2luZnJhc3RydWN0dXJlL2hhbmRsZXJzLnRzPzk5OWMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0ICogYXMgTW9kZWwgZnJvbSBcIi4uL2NvcmUvbW9kZWxcIjtcclxuaW1wb3J0IHtBamF4fSBmcm9tIFwiLi9hamF4XCJcclxuaW1wb3J0ICogYXMgRW51bXMgZnJvbSBcIi4vZW51bXNcIjtcclxuaW1wb3J0ICogYXMgVmlldyBmcm9tIFwiLi92aWV3XCI7XHJcblxyXG5leHBvcnQgY2xhc3MgUGFnZXJBamF4SGFuZGxlclxyXG57XHJcbiAgICBwYWdlcjogVmlldy5QYWdlcjtcclxuICAgIHVwZGF0ZVRhcmdldDogc3RyaW5nO1xyXG5cclxuICAgIGNvbnN0cnVjdG9yKHBhZ2VyOiBWaWV3LlBhZ2VyLCB1cGRhdGVUYXJnZXQ6IHN0cmluZylcclxuICAgIHtcclxuICAgICAgICB0aGlzLnBhZ2VyID0gcGFnZXI7XHJcbiAgICAgICAgdGhpcy51cGRhdGVUYXJnZXQgPSB1cGRhdGVUYXJnZXQ7XHJcbiAgICB9XHJcblxyXG4gICAgc2VuZEFqYXhSZXF1ZXN0KHBhZ2VyQnRuOiBWaWV3LlBhZ2VyQnRuKVxyXG4gICAge1xyXG4gICAgICAgIGlmICghcGFnZXJCdG4uaXNFbmFibGVkKVxyXG4gICAgICAgICAgICByZXR1cm47XHJcblxyXG4gICAgICAgIGxldCBhamF4RGF0YTtcclxuICAgICAgICBpZiAoIXBhZ2VyQnRuLnJvd0lkKVxyXG4gICAgICAgICAgICBhamF4RGF0YSA9IG5ldyBNb2RlbC5IaXN0b3J5QWpheERhdGEocGFnZXJCdG4uc3RhcnRJbmRleCk7XHJcbiAgICAgICAgZWxzZVxyXG4gICAgICAgICAgICBhamF4RGF0YSA9IHsgaGlzdG9yeVJvd0lkOiBwYWdlckJ0bi5yb3dJZCwgc3RhcnRJbmRleDogcGFnZXJCdG4uc3RhcnRJbmRleH1cclxuICAgICAgICAvL2FqYXhEYXRhID0gbmV3IE1vZGVsLlNpdGVtYXBBamF4RGF0YShwYWdlckJ0bi5zdGFydEluZGV4LCBwYWdlckJ0bi5yb3dJZCk7XHJcblxyXG4gICAgICAgIEFqYXgucnVuKEVudW1zLkh0dHBNZXRob2QuUE9TVCxcclxuICAgICAgICAgICAgcGFnZXJCdG4udXJsLFxyXG4gICAgICAgICAgICBhamF4RGF0YSxcclxuICAgICAgICAgICAgKG5ld1BhZ2U6IE1vZGVsLkhpc3RvcnlQYWdlPHN0cmluZz4pID0+XHJcbiAgICAgICAgICAgIHtcclxuICAgICAgICAgICAgICAgICQodGhpcy51cGRhdGVUYXJnZXQpLmh0bWwobmV3UGFnZS5jb250ZW50SGlzdG9yeSk7XHJcbiAgICAgICAgICAgICAgICB0aGlzLnBhZ2VyQnRuU3R5bGVUb2dnbGUobmV3UGFnZSk7XHJcbiAgICAgICAgICAgIH0pO1xyXG4gICAgfVxyXG5cclxuICAgIHByaXZhdGUgcGFnZXJCdG5TdHlsZVRvZ2dsZShtb2RlbDogTW9kZWwuSGlzdG9yeVBhZ2U8c3RyaW5nPilcclxuICAgIHtcclxuICAgICAgICB0aGlzLnBhZ2VyLnByZXZpb3VzQnRuLnN0YXJ0SW5kZXggPSBtb2RlbC5oaXN0b3J5UGFnZXIucHJldmlvdXNTdGFydEluZGV4O1xyXG4gICAgICAgIHRoaXMucGFnZXIucHJldmlvdXNCdG4uaXNFbmFibGVkID0gIW1vZGVsLmhpc3RvcnlQYWdlci5pc0ZpcnN0UGFnZTtcclxuICAgICAgICB0aGlzLnBhZ2VyLm5leHRCdG4uc3RhcnRJbmRleCA9IG1vZGVsLmhpc3RvcnlQYWdlci5uZXh0U3RhcnRJbmRleDtcclxuICAgICAgICB0aGlzLnBhZ2VyLm5leHRCdG4uaXNFbmFibGVkID0gIW1vZGVsLmhpc3RvcnlQYWdlci5pc0xhc3RQYWdlO1xyXG4gICAgfVxyXG59XG5cblxuLy8gV0VCUEFDSyBGT09URVIgLy9cbi8vIC4vaW5mcmFzdHJ1Y3R1cmUvaGFuZGxlcnMudHMiXSwibWFwcGluZ3MiOiI7QUFBQTtBQUNBO0FBQ0E7QUFHQTtBQUtBO0FBRUE7QUFDQTtBQUNBO0FBRUE7QUFBQTtBQUVBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUtBO0FBQ0E7QUFDQTtBQUNBO0FBRUE7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFBQTtBQXhDQTsiLCJzb3VyY2VSb290IjoiIn0=");
+	"use strict";
+	var Model = __webpack_require__(5);
+	var ajax_1 = __webpack_require__(1);
+	var Enums = __webpack_require__(2);
+	var PagerAjaxHandler = (function () {
+	    function PagerAjaxHandler(pager, updateTarget) {
+	        this.pager = pager;
+	        this.updateTarget = updateTarget;
+	    }
+	    PagerAjaxHandler.prototype.sendAjaxRequest = function (pagerBtn) {
+	        var _this = this;
+	        if (!pagerBtn.isEnabled)
+	            return;
+	        var ajaxData;
+	        if (!pagerBtn.rowId)
+	            ajaxData = new Model.HistoryAjaxData(pagerBtn.startIndex);
+	        else
+	            ajaxData = { historyRowId: pagerBtn.rowId, startIndex: pagerBtn.startIndex };
+	        //ajaxData = new Model.SitemapAjaxData(pagerBtn.startIndex, pagerBtn.rowId);
+	        ajax_1.Ajax.run(Enums.HttpMethod.POST, pagerBtn.url, ajaxData, function (newPage) {
+	            $(_this.updateTarget).html(newPage.contentHistory);
+	            _this.pagerBtnStyleToggle(newPage);
+	        });
+	    };
+	    PagerAjaxHandler.prototype.pagerBtnStyleToggle = function (model) {
+	        this.pager.previousBtn.startIndex = model.historyPager.previousStartIndex;
+	        this.pager.previousBtn.isEnabled = !model.historyPager.isFirstPage;
+	        this.pager.nextBtn.startIndex = model.historyPager.nextStartIndex;
+	        this.pager.nextBtn.isEnabled = !model.historyPager.isLastPage;
+	    };
+	    return PagerAjaxHandler;
+	}());
+	exports.PagerAjaxHandler = PagerAjaxHandler;
+	
 
 /***/ },
 /* 5 */
 /***/ function(module, exports) {
 
-	eval("\"use strict\";\r\nvar __extends = (this && this.__extends) || function (d, b) {\r\n    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];\r\n    function __() { this.constructor = d; }\r\n    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());\r\n};\r\nvar HistoryAjaxData = (function () {\r\n    function HistoryAjaxData(startIndex) {\r\n        this.startIndex = startIndex;\r\n    }\r\n    return HistoryAjaxData;\r\n}());\r\nexports.HistoryAjaxData = HistoryAjaxData;\r\nvar SitemapAjaxData = (function (_super) {\r\n    __extends(SitemapAjaxData, _super);\r\n    function SitemapAjaxData(startIndex, rowId) {\r\n        _super.call(this, startIndex);\r\n        this.historyRowId = rowId;\r\n    }\r\n    return SitemapAjaxData;\r\n}(HistoryAjaxData));\r\nexports.SitemapAjaxData = SitemapAjaxData;\r\nvar HistoryPage = (function () {\r\n    function HistoryPage() {\r\n    }\r\n    return HistoryPage;\r\n}());\r\nexports.HistoryPage = HistoryPage;\r\nvar HistoryPager = (function () {\r\n    function HistoryPager() {\r\n    }\r\n    return HistoryPager;\r\n}());\r\nexports.HistoryPager = HistoryPager;\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiNS5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2NvcmUvbW9kZWwudHM/OTExYSJdLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgY2xhc3MgSGlzdG9yeUFqYXhEYXRhXHJcbntcclxuICAgIHN0YXJ0SW5kZXg6IG51bWJlcjtcclxuXHJcbiAgICBjb25zdHJ1Y3RvcihzdGFydEluZGV4OiBudW1iZXIpXHJcbiAgICB7XHJcbiAgICAgICAgdGhpcy5zdGFydEluZGV4ID0gc3RhcnRJbmRleDtcclxuICAgIH1cclxufVxyXG5cclxuZXhwb3J0IGNsYXNzIFNpdGVtYXBBamF4RGF0YSBleHRlbmRzIEhpc3RvcnlBamF4RGF0YVxyXG57XHJcbiAgICBoaXN0b3J5Um93SWQ6IHN0cmluZztcclxuXHJcbiAgICBjb25zdHJ1Y3RvcihzdGFydEluZGV4OiBudW1iZXIsIHJvd0lkOiBzdHJpbmcpXHJcbiAgICB7XHJcbiAgICAgICAgc3VwZXIoc3RhcnRJbmRleCk7XHJcbiAgICAgICAgdGhpcy5oaXN0b3J5Um93SWQgPSByb3dJZDtcclxuICAgIH1cclxufVxyXG5cclxuZXhwb3J0IGNsYXNzIEhpc3RvcnlQYWdlPFQ+IHtcclxuICAgIGNvbnRlbnRIaXN0b3J5OiBUO1xyXG4gICAgaGlzdG9yeVBhZ2VyOiBIaXN0b3J5UGFnZXI7XHJcbn1cclxuXHJcbmV4cG9ydCBjbGFzcyBIaXN0b3J5UGFnZXJcclxue1xyXG4gICAgaXNMYXN0UGFnZTogYm9vbGVhbjtcclxuICAgIGlzRmlyc3RQYWdlOiBib29sZWFuO1xyXG4gICAgcHJldmlvdXNTdGFydEluZGV4OiBudW1iZXI7XHJcbiAgICBuZXh0U3RhcnRJbmRleDogbnVtYmVyO1xyXG59XG5cblxuLy8gV0VCUEFDSyBGT09URVIgLy9cbi8vIC4vY29yZS9tb2RlbC50cyJdLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBQUE7QUFJQTtBQUVBO0FBQ0E7QUFDQTtBQUFBO0FBUkE7QUFVQTtBQUFBO0FBSUE7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUFBO0FBVEE7QUFXQTtBQUFBO0FBR0E7QUFBQTtBQUFBO0FBSEE7QUFLQTtBQUFBO0FBTUE7QUFBQTtBQUFBO0FBTkE7Iiwic291cmNlUm9vdCI6IiJ9");
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var MeasurementsViewModel = (function () {
+	    function MeasurementsViewModel(model) {
+	        this.results = model;
+	    }
+	    MeasurementsViewModel.prototype.sortModelExceptFirst = function () {
+	        var first = this.results.shift();
+	        this.sortModel();
+	        this.results.unshift(first);
+	    };
+	    MeasurementsViewModel.prototype.sortModel = function () {
+	        this.results.sort(function (a, b) { return a.mintime - b.mintime; });
+	    };
+	    MeasurementsViewModel.prototype.push = function (value) {
+	        this.results.push(value);
+	    };
+	    return MeasurementsViewModel;
+	}());
+	exports.MeasurementsViewModel = MeasurementsViewModel;
+	var HistoryAjaxData = (function () {
+	    function HistoryAjaxData(startIndex) {
+	        this.startIndex = startIndex;
+	    }
+	    return HistoryAjaxData;
+	}());
+	exports.HistoryAjaxData = HistoryAjaxData;
+	var MeasurementResult = (function () {
+	    function MeasurementResult() {
+	    }
+	    return MeasurementResult;
+	}());
+	exports.MeasurementResult = MeasurementResult;
+	var SitemapAjaxData = (function (_super) {
+	    __extends(SitemapAjaxData, _super);
+	    function SitemapAjaxData(startIndex, rowId) {
+	        _super.call(this, startIndex);
+	        this.historyRowId = rowId;
+	    }
+	    return SitemapAjaxData;
+	}(HistoryAjaxData));
+	exports.SitemapAjaxData = SitemapAjaxData;
+	var HistoryPage = (function () {
+	    function HistoryPage() {
+	    }
+	    return HistoryPage;
+	}());
+	exports.HistoryPage = HistoryPage;
+	var HistoryPager = (function () {
+	    function HistoryPager() {
+	    }
+	    return HistoryPager;
+	}());
+	exports.HistoryPager = HistoryPager;
+	
 
 /***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("/// <reference path=\"../../../typings/jquery/jquery.d.ts\" />\r\n\"use strict\";\r\nvar Enums = __webpack_require__(2);\r\nvar PagerBtn = (function () {\r\n    function PagerBtn(element) {\r\n        this.element = $(element);\r\n    }\r\n    Object.defineProperty(PagerBtn.prototype, \"click\", {\r\n        set: function (value) {\r\n            this.element.click(value);\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    Object.defineProperty(PagerBtn.prototype, \"isEnabled\", {\r\n        get: function () {\r\n            return !this.element.parent().hasClass(\"disabled\");\r\n        },\r\n        set: function (value) {\r\n            if (value)\r\n                this.element.parent().removeClass(\"disabled\");\r\n            else\r\n                this.element.parent().addClass(\"disabled\");\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    Object.defineProperty(PagerBtn.prototype, \"role\", {\r\n        get: function () {\r\n            return Enums.PagerElementRole[this.element.attr(\"data-role\")];\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    Object.defineProperty(PagerBtn.prototype, \"startIndex\", {\r\n        get: function () {\r\n            return +this.element.attr(\"data-start-index\");\r\n        },\r\n        set: function (value) {\r\n            this.element.attr(\"data-start-index\", value);\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    Object.defineProperty(PagerBtn.prototype, \"url\", {\r\n        get: function () {\r\n            return this.element.attr(\"href\");\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    Object.defineProperty(PagerBtn.prototype, \"rowId\", {\r\n        get: function () {\r\n            return this.element.attr(\"data-history-row-id\");\r\n        },\r\n        enumerable: true,\r\n        configurable: true\r\n    });\r\n    return PagerBtn;\r\n}());\r\nexports.PagerBtn = PagerBtn;\r\nvar Pager = (function () {\r\n    function Pager(selector) {\r\n        this.selector = selector;\r\n        this.getPagerElements(selector);\r\n    }\r\n    Pager.prototype.getPagerElements = function (selector) {\r\n        var _this = this;\r\n        var elments = $(selector);\r\n        if (elments.length !== 0) {\r\n            elments.each(function (index, elem) {\r\n                switch (Enums.PagerElementRole[$(elem).attr(\"data-role\")]) {\r\n                    case Enums.PagerElementRole.Next:\r\n                        _this.nextBtn = new PagerBtn(elem);\r\n                        break;\r\n                    case Enums.PagerElementRole.Previous:\r\n                        _this.previousBtn = new PagerBtn(elem);\r\n                        break;\r\n                }\r\n            });\r\n        }\r\n        else {\r\n            throw \"selector does not indicate page elements\";\r\n        }\r\n    };\r\n    return Pager;\r\n}());\r\nexports.Pager = Pager;\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiNi5qcyIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL2luZnJhc3RydWN0dXJlL3ZpZXcudHM/MzliNSJdLCJzb3VyY2VzQ29udGVudCI6WyIvLy8gPHJlZmVyZW5jZSBwYXRoPVwiLi4vLi4vLi4vdHlwaW5ncy9qcXVlcnkvanF1ZXJ5LmQudHNcIiAvPlxyXG5cclxuaW1wb3J0ICogYXMgRW51bXMgZnJvbSBcIi4vZW51bXNcIjtcclxuXHJcbmV4cG9ydCBjbGFzcyBQYWdlckJ0blxyXG57XHJcbiAgICBwcml2YXRlIGVsZW1lbnQ6IEpRdWVyeTtcclxuXHJcbiAgICBjb25zdHJ1Y3RvcihlbGVtZW50OiBFbGVtZW50KVxyXG4gICAge1xyXG4gICAgICAgIHRoaXMuZWxlbWVudCA9ICQoZWxlbWVudCk7XHJcbiAgICB9XHJcblxyXG4gICAgc2V0IGNsaWNrKHZhbHVlOiAoZXZlbnRPYmplY3Q6IEpRdWVyeUV2ZW50T2JqZWN0KSA9PiBhbnkpXHJcbiAgICB7XHJcbiAgICAgICAgdGhpcy5lbGVtZW50LmNsaWNrKHZhbHVlKTtcclxuICAgIH1cclxuXHJcbiAgICBzZXQgaXNFbmFibGVkKHZhbHVlOiBib29sZWFuKVxyXG4gICAge1xyXG4gICAgICAgIGlmICh2YWx1ZSlcclxuICAgICAgICAgICAgdGhpcy5lbGVtZW50LnBhcmVudCgpLnJlbW92ZUNsYXNzKFwiZGlzYWJsZWRcIik7XHJcbiAgICAgICAgZWxzZVxyXG4gICAgICAgICAgICB0aGlzLmVsZW1lbnQucGFyZW50KCkuYWRkQ2xhc3MoXCJkaXNhYmxlZFwiKTtcclxuICAgIH1cclxuICAgIGdldCBpc0VuYWJsZWQoKTogYm9vbGVhblxyXG4gICAge1xyXG4gICAgICAgIHJldHVybiAhdGhpcy5lbGVtZW50LnBhcmVudCgpLmhhc0NsYXNzKFwiZGlzYWJsZWRcIik7XHJcbiAgICB9XHJcblxyXG4gICAgZ2V0IHJvbGUoKTogRW51bXMuUGFnZXJFbGVtZW50Um9sZVxyXG4gICAge1xyXG5cclxuICAgICAgICByZXR1cm4gRW51bXMuUGFnZXJFbGVtZW50Um9sZVt0aGlzLmVsZW1lbnQuYXR0cihcImRhdGEtcm9sZVwiKV07XHJcbiAgICB9XHJcblxyXG4gICAgZ2V0IHN0YXJ0SW5kZXgoKTogbnVtYmVyXHJcbiAgICB7XHJcbiAgICAgICAgcmV0dXJuICt0aGlzLmVsZW1lbnQuYXR0cihcImRhdGEtc3RhcnQtaW5kZXhcIik7XHJcbiAgICB9XHJcbiAgICBzZXQgc3RhcnRJbmRleCh2YWx1ZTogbnVtYmVyKVxyXG4gICAge1xyXG4gICAgICAgIHRoaXMuZWxlbWVudC5hdHRyKFwiZGF0YS1zdGFydC1pbmRleFwiLCB2YWx1ZSk7XHJcbiAgICB9XHJcblxyXG4gICAgZ2V0IHVybCgpOiBzdHJpbmdcclxuICAgIHtcclxuICAgICAgICByZXR1cm4gdGhpcy5lbGVtZW50LmF0dHIoXCJocmVmXCIpO1xyXG4gICAgfVxyXG5cclxuICAgIGdldCByb3dJZCgpOnN0cmluZ1xyXG4gICAge1xyXG4gICAgICAgIHJldHVybiB0aGlzLmVsZW1lbnQuYXR0cihcImRhdGEtaGlzdG9yeS1yb3ctaWRcIik7XHJcbiAgICB9XHJcbn1cclxuXHJcbmV4cG9ydCBjbGFzcyBQYWdlclxyXG57XHJcbiAgICBuZXh0QnRuOiBQYWdlckJ0bjtcclxuICAgIHByZXZpb3VzQnRuOiBQYWdlckJ0bjtcclxuICAgIHNlbGVjdG9yOiBzdHJpbmc7XHJcblxyXG4gICAgY29uc3RydWN0b3Ioc2VsZWN0b3I6IHN0cmluZylcclxuICAgIHtcclxuICAgICAgICB0aGlzLnNlbGVjdG9yID0gc2VsZWN0b3I7XHJcbiAgICAgICAgdGhpcy5nZXRQYWdlckVsZW1lbnRzKHNlbGVjdG9yKTtcclxuICAgIH1cclxuXHJcbiAgICBwcml2YXRlIGdldFBhZ2VyRWxlbWVudHMoc2VsZWN0b3I6IHN0cmluZylcclxuICAgIHtcclxuICAgICAgICBsZXQgZWxtZW50cyA9ICQoc2VsZWN0b3IpO1xyXG4gICAgICAgIGlmIChlbG1lbnRzLmxlbmd0aCAhPT0gMClcclxuICAgICAgICB7XHJcbiAgICAgICAgICAgIGVsbWVudHMuZWFjaCgoaW5kZXg6IG51bWJlciwgZWxlbTogRWxlbWVudCkgPT5cclxuICAgICAgICAgICAge1xyXG4gICAgICAgICAgICAgICAgc3dpdGNoIChFbnVtcy5QYWdlckVsZW1lbnRSb2xlWyQoZWxlbSkuYXR0cihcImRhdGEtcm9sZVwiKV0pXHJcbiAgICAgICAgICAgICAgICB7XHJcbiAgICAgICAgICAgICAgICAgICAgY2FzZSBFbnVtcy5QYWdlckVsZW1lbnRSb2xlLk5leHQ6XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIHRoaXMubmV4dEJ0biA9IG5ldyBQYWdlckJ0bihlbGVtKTtcclxuICAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7XHJcbiAgICAgICAgICAgICAgICAgICAgY2FzZSBFbnVtcy5QYWdlckVsZW1lbnRSb2xlLlByZXZpb3VzOlxyXG4gICAgICAgICAgICAgICAgICAgICAgICB0aGlzLnByZXZpb3VzQnRuID0gbmV3IFBhZ2VyQnRuKGVsZW0pO1xyXG4gICAgICAgICAgICAgICAgICAgICAgICBicmVhaztcclxuICAgICAgICAgICAgICAgIH1cclxuICAgICAgICAgICAgfSk7XHJcbiAgICAgICAgfVxyXG4gICAgICAgIGVsc2VcclxuICAgICAgICB7XHJcbiAgICAgICAgICAgIHRocm93IFwic2VsZWN0b3IgZG9lcyBub3QgaW5kaWNhdGUgcGFnZSBlbGVtZW50c1wiO1xyXG4gICAgICAgIH1cclxuICAgIH1cclxufVxyXG5cblxuXG4vLyBXRUJQQUNLIEZPT1RFUiAvL1xuLy8gLi9pbmZyYXN0cnVjdHVyZS92aWV3LnRzIl0sIm1hcHBpbmdzIjoiQUFBQTs7QUFFQTtBQUVBO0FBSUE7QUFFQTtBQUNBO0FBRUE7QUFBQTtBQUVBO0FBQ0E7OztBQUFBO0FBRUE7QUFPQTtBQUVBO0FBQ0E7QUFWQTtBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7OztBQUFBO0FBTUE7QUFBQTtBQUdBO0FBQ0E7OztBQUFBO0FBRUE7QUFBQTtBQUVBO0FBQ0E7QUFDQTtBQUVBO0FBQ0E7OztBQUpBO0FBTUE7QUFBQTtBQUVBO0FBQ0E7OztBQUFBO0FBRUE7QUFBQTtBQUVBO0FBQ0E7OztBQUFBO0FBQ0E7QUFBQTtBQWxEQTtBQW9EQTtBQU1BO0FBRUE7QUFDQTtBQUNBO0FBRUE7QUFBQTtBQUVBO0FBQ0E7QUFFQTtBQUVBO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFFQTtBQUNBO0FBQ0E7QUFDQTtBQUFBO0FBbkNBOyIsInNvdXJjZVJvb3QiOiIifQ==");
+	/// <reference path="../../../typings/jquery/jquery.d.ts" />
+	"use strict";
+	var Enums = __webpack_require__(2);
+	var PagerBtn = (function () {
+	    function PagerBtn(element) {
+	        this.element = $(element);
+	    }
+	    Object.defineProperty(PagerBtn.prototype, "click", {
+	        set: function (value) {
+	            this.element.click(value);
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(PagerBtn.prototype, "isEnabled", {
+	        get: function () {
+	            return !this.element.parent().hasClass("disabled");
+	        },
+	        set: function (value) {
+	            if (value)
+	                this.element.parent().removeClass("disabled");
+	            else
+	                this.element.parent().addClass("disabled");
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(PagerBtn.prototype, "role", {
+	        get: function () {
+	            return Enums.PagerElementRole[this.element.attr("data-role")];
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(PagerBtn.prototype, "startIndex", {
+	        get: function () {
+	            return +this.element.attr("data-start-index");
+	        },
+	        set: function (value) {
+	            this.element.attr("data-start-index", value);
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(PagerBtn.prototype, "url", {
+	        get: function () {
+	            return this.element.attr("href");
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(PagerBtn.prototype, "rowId", {
+	        get: function () {
+	            return this.element.attr("data-history-row-id");
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return PagerBtn;
+	}());
+	exports.PagerBtn = PagerBtn;
+	var Pager = (function () {
+	    function Pager(selector) {
+	        this.selector = selector;
+	        this.getPagerElements(selector);
+	    }
+	    Pager.prototype.getPagerElements = function (selector) {
+	        var _this = this;
+	        var elments = $(selector);
+	        if (elments.length !== 0) {
+	            elments.each(function (index, elem) {
+	                switch (Enums.PagerElementRole[$(elem).attr("data-role")]) {
+	                    case Enums.PagerElementRole.Next:
+	                        _this.nextBtn = new PagerBtn(elem);
+	                        break;
+	                    case Enums.PagerElementRole.Previous:
+	                        _this.previousBtn = new PagerBtn(elem);
+	                        break;
+	                }
+	            });
+	        }
+	        else {
+	            throw "selector does not indicate page elements";
+	        }
+	    };
+	    return Pager;
+	}());
+	exports.Pager = Pager;
+	
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var Model = __webpack_require__(5);
+	var MeasurementsViewModel = Model.MeasurementsViewModel;
+	var chartDisplayer_1 = __webpack_require__(8);
+	var tableDisplayer_1 = __webpack_require__(11);
+	var Displayer = (function () {
+	    function Displayer(chartId, tableContainerId) {
+	        this.isHidden = true;
+	        this.model = new MeasurementsViewModel();
+	        this.chartDisplayer = new chartDisplayer_1.ChartDisplayer(chartId, this.model);
+	        this.tableDisplayer = new tableDisplayer_1.TableDisplayer(tableContainerId, this.model);
+	    }
+	    Displayer.prototype.visualize = function (model) {
+	        this.format(model);
+	        this.model.push(model);
+	        this.chartDisplayer.display(model);
+	        this.tableDisplayer.display(model);
+	    };
+	    Displayer.prototype.clean = function () {
+	        this.model.results = [];
+	        this.tableDisplayer.clear();
+	    };
+	    Displayer.prototype.sortAndDisplay = function () {
+	        this.model.sortModelExceptFirst();
+	        this.chartDisplayer.display();
+	        this.tableDisplayer.display();
+	    };
+	    Displayer.prototype.show = function () {
+	        if (!this.isHidden)
+	            return;
+	        this.chartDisplayer.show();
+	        this.tableDisplayer.show();
+	        this.isHidden = false;
+	    };
+	    Displayer.prototype.hide = function () {
+	        if (this.isHidden)
+	            return;
+	        this.chartDisplayer.hide();
+	        this.tableDisplayer.hide();
+	        this.isHidden = true;
+	    };
+	    Displayer.prototype.format = function (model) {
+	        model.mintime = +model.mintime.toFixed(2);
+	        model.maxtime = +model.maxtime.toFixed(2);
+	    };
+	    return Displayer;
+	}());
+	exports.Displayer = Displayer;
+	//class ChartDisplayer2
+	//{
+	//    chart: Chart;
+	//    private modelParts: ResultPack;
+	//    private state: ChartMode;
+	//    private model: MeasurementsViewModel;
+	//    constructor(div: HTMLElement, model: MeasurementsViewModel)
+	//    {
+	//        this.state = ChartMode.Initialize;
+	//        this.model = model;
+	//        this.chartInit(div);
+	//        this.dataInit();
+	//    }
+	//    display(model?: MeasurementResult)
+	//    {
+	//        switch (this.state)
+	//        {
+	//            case ChartMode.Initialize:
+	//                this.initAndDisplay(model);
+	//                this.state = ChartMode.RealTimeUpdate;
+	//                break;
+	//            case ChartMode.RealTimeUpdate:
+	//                this.updateChart(model);
+	//                break;
+	//            case ChartMode.SortAndDisplay:
+	//                this.replaceChartData();
+	//                this.chart.update();
+	//                this.state = ChartMode.RealTimeUpdate;
+	//                break;
+	//        }
+	//    }
+	//    sortAdnDisplay()
+	//    {
+	//        this.state = ChartMode.SortAndDisplay;
+	//        this.display();
+	//    }
+	//    private updateModelParts(value: MeasurementResult)
+	//    {
+	//        this.modelParts.urls.push(value.url);
+	//        this.modelParts.minValues.push(value.mintime);
+	//        this.modelParts.maxValues.push(value.maxtime);
+	//    }
+	//    private initAndDisplay(value: MeasurementResult)
+	//    {
+	//        this.updateModelParts(value);
+	//        //this.chart.show();
+	//        this.chart.create();
+	//    }
+	//    private updateChart(value: MeasurementResult)
+	//    {
+	//        this.updateModelParts(value);
+	//        this.chart.update();
+	//    }
+	//    private replaceChartData()
+	//    {
+	//        let tempModelAsArray = this.splitModel();
+	//        this.chart.data[0].x = tempModelAsArray.urls;
+	//        this.chart.data[1].x = tempModelAsArray.urls;
+	//        this.chart.data[0].y = tempModelAsArray.maxValues;
+	//        this.chart.data[1].y = tempModelAsArray.minValues;
+	//    }
+	//    private splitModel(): ResultPack
+	//    {
+	//        let res: ResultPack = new ResultPack();
+	//        for (let item of this.model.results)
+	//        {
+	//            res.urls.push(item.url);
+	//            res.minValues.push(item.mintime);
+	//            res.maxValues.push(item.maxtime);
+	//        }
+	//        return res;
+	//    }
+	//    private dataInit()
+	//    {
+	//        this.modelParts = new ResultPack();
+	//        let trace1 = {
+	//            x: this.modelParts.urls,
+	//            y: this.modelParts.maxValues,
+	//            name: 'Max',
+	//            type: 'bar',
+	//            marker: { color: 'rgb(55, 83, 109)' }
+	//        };
+	//        let trace2 = {
+	//            x: this.modelParts.urls,
+	//            y: this.modelParts.minValues,
+	//            name: 'Min',
+	//            type: 'bar',
+	//            marker: { color: 'rgb(26, 118, 255)' }
+	//        };
+	//        let data = [trace1, trace2];
+	//        this.chart.data = data;
+	//    }
+	//    private chartInit(divId: HTMLElement)
+	//    {
+	//        this.chart = new Chart();
+	//        let layout = {
+	//            font: {
+	//                family: "Segoe UI, Times New Roman, Open Sans, verdana, arial, sans-serif",
+	//                color: '#444'
+	//            },
+	//            title: 'Load Time Results',
+	//            barmode: 'overlay',
+	//            autosize: true,
+	//            xaxis: {
+	//                title: 'Urls',
+	//                showticklabels: false,
+	//                autorange: true
+	//            },
+	//            yaxis: {
+	//                title: 'Time (s)',
+	//                autorange: true,
+	//                titlefont: {
+	//                    size: 16,
+	//                    color: 'rgb(107, 107, 107)'
+	//                },
+	//                tickfont: {
+	//                    size: 14,
+	//                    color: 'rgb(107, 107, 107)'
+	//                }
+	//            },
+	//            legend: {
+	//                x: 0,
+	//                y: 1.0,
+	//                bgcolor: 'rgba(255, 255, 255, 0)',
+	//                bordercolor: 'rgba(255, 255, 255, 0)'
+	//            }
+	//        };
+	//        this.chart.layout = layout;
+	//        this.chart.canvasElement = divId;
+	//    }
+	//}
+	//enum ChartMode
+	//{
+	//    Initialize,
+	//    RealTimeUpdate,
+	//    SortAndDisplay
+	//} 
+	
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var elementDisplayer_1 = __webpack_require__(9);
+	var chart_1 = __webpack_require__(10);
+	var ChartDisplayer = (function (_super) {
+	    __extends(ChartDisplayer, _super);
+	    function ChartDisplayer(divContainerId, model) {
+	        _super.call(this, divContainerId, model);
+	        this.chartInit(this.htmlElement);
+	        this.dataInit();
+	        this.chart.create();
+	    }
+	    ChartDisplayer.prototype.displayFromLocalModel = function () {
+	        this.replaceChartData(this.splitModel());
+	        this.chart.update();
+	        this.modelParts = new ResultPack();
+	        this.replaceChartData(this.modelParts);
+	    };
+	    ChartDisplayer.prototype.displayFromOuterModel = function (model) {
+	        this.updateChart(model);
+	    };
+	    ChartDisplayer.prototype.initAndDisplay = function (model) {
+	        this.updateModelParts(model);
+	        this.show();
+	        this.chart.create();
+	    };
+	    ChartDisplayer.prototype.updateModelParts = function (value) {
+	        this.modelParts.urls.push(value.url);
+	        this.modelParts.minValues.push(value.mintime);
+	        this.modelParts.maxValues.push(value.maxtime);
+	    };
+	    ChartDisplayer.prototype.updateChart = function (value) {
+	        this.updateModelParts(value);
+	        this.chart.update();
+	    };
+	    ChartDisplayer.prototype.replaceChartData = function (modelAsArray) {
+	        this.chart.data[0].x = modelAsArray.urls;
+	        this.chart.data[1].x = modelAsArray.urls;
+	        this.chart.data[0].y = modelAsArray.maxValues;
+	        this.chart.data[1].y = modelAsArray.minValues;
+	    };
+	    ChartDisplayer.prototype.splitModel = function () {
+	        var res = new ResultPack();
+	        for (var _i = 0, _a = this.model.results; _i < _a.length; _i++) {
+	            var item = _a[_i];
+	            res.urls.push(item.url);
+	            res.minValues.push(item.mintime);
+	            res.maxValues.push(item.maxtime);
+	        }
+	        return res;
+	    };
+	    ChartDisplayer.prototype.dataInit = function () {
+	        this.modelParts = new ResultPack();
+	        var trace1 = {
+	            x: this.modelParts.urls,
+	            y: this.modelParts.maxValues,
+	            name: 'Max',
+	            type: 'bar',
+	            marker: { color: 'rgb(55, 83, 109)' }
+	        };
+	        var trace2 = {
+	            x: this.modelParts.urls,
+	            y: this.modelParts.minValues,
+	            name: 'Min',
+	            type: 'bar',
+	            marker: { color: 'rgb(26, 118, 255)' }
+	        };
+	        var data = [trace1, trace2];
+	        this.chart.data = data;
+	    };
+	    ChartDisplayer.prototype.chartInit = function (divId) {
+	        var container = $(divId);
+	        var w = container.width();
+	        var h = container.height();
+	        // hide the char container element
+	        this.hide();
+	        this.chart = new chart_1.Chart();
+	        var layout = {
+	            font: {
+	                family: "Segoe UI, Times New Roman, Open Sans, verdana, arial, sans-serif",
+	                color: '#444'
+	            },
+	            title: 'Load Time Results',
+	            barmode: 'overlay',
+	            autosize: true,
+	            width: w,
+	            height: h,
+	            xaxis: {
+	                title: 'Urls',
+	                showticklabels: false,
+	                autorange: true
+	            },
+	            yaxis: {
+	                title: 'Time (s)',
+	                autorange: true,
+	                titlefont: {
+	                    size: 16,
+	                    color: 'rgb(107, 107, 107)'
+	                },
+	                tickfont: {
+	                    size: 14,
+	                    color: 'rgb(107, 107, 107)'
+	                }
+	            },
+	            legend: {
+	                x: 0,
+	                y: 1.0,
+	                bgcolor: 'rgba(255, 255, 255, 0)',
+	                bordercolor: 'rgba(255, 255, 255, 0)'
+	            }
+	        };
+	        this.chart.layout = layout;
+	        this.chart.canvasElement = divId;
+	    };
+	    return ChartDisplayer;
+	}(elementDisplayer_1.ElementDisplayer));
+	exports.ChartDisplayer = ChartDisplayer;
+	var ResultPack = (function () {
+	    function ResultPack() {
+	        this.urls = [];
+	        this.minValues = [];
+	        this.maxValues = [];
+	    }
+	    return ResultPack;
+	}());
+	
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var ElementDisplayer = (function () {
+	    function ElementDisplayer(elementId, model) {
+	        this.htmlElement = document.querySelector(elementId);
+	        this.model = model;
+	    }
+	    ElementDisplayer.prototype.display = function (model) {
+	        if (model) {
+	            this.displayFromOuterModel(model);
+	        }
+	        else {
+	            this.displayFromLocalModel();
+	        }
+	    };
+	    ElementDisplayer.prototype.show = function () {
+	        this.htmlElement.style.display = "block";
+	    };
+	    ElementDisplayer.prototype.hide = function () {
+	        this.htmlElement.style.display = "none";
+	    };
+	    return ElementDisplayer;
+	}());
+	exports.ElementDisplayer = ElementDisplayer;
+	
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Chart = (function () {
+	    function Chart() {
+	    }
+	    Chart.prototype.create = function () {
+	        Plotly.newPlot(this.canvasElement, this.data, this.layout);
+	    };
+	    Chart.prototype.update = function () {
+	        Plotly.redraw(this.canvasElement);
+	    };
+	    return Chart;
+	}());
+	exports.Chart = Chart;
+	
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var elementDisplayer_1 = __webpack_require__(9);
+	var Table = __webpack_require__(12);
+	var TableDisplayer = (function (_super) {
+	    __extends(TableDisplayer, _super);
+	    function TableDisplayer(tableContainerId, model) {
+	        _super.call(this, tableContainerId, model);
+	        this.tableMakerInit();
+	    }
+	    TableDisplayer.prototype.tableMakerInit = function () {
+	        var headers = ["Url", "Min (S)", "Max (s)"];
+	        var props = ["url", "mintime", "maxtime"];
+	        var maper = new Table.HeaderPropertyMaper(headers, props);
+	        this.tableMaker = new Table.TableMaker(this.htmlElement, maper);
+	        this.tableMaker.tableClass = "table table-bordered table-hover";
+	        this.tableMaker.createTabelInContainer();
+	    };
+	    TableDisplayer.prototype.displayFromLocalModel = function () {
+	        this.tableMaker.curentColumnNumber = 1;
+	        this.tableMaker.fillTableFrom(this.model.results);
+	        this.tableMaker.curentColumnNumber = 1;
+	    };
+	    TableDisplayer.prototype.displayFromOuterModel = function (model) {
+	        this.tableMaker.addRow(model);
+	    };
+	    TableDisplayer.prototype.clear = function () {
+	        var tbody = this.tableMaker.tableElement.children[0];
+	        if (tbody)
+	            tbody.innerHTML = '';
+	        this.tableMaker.addHeader();
+	    };
+	    return TableDisplayer;
+	}(elementDisplayer_1.ElementDisplayer));
+	exports.TableDisplayer = TableDisplayer;
+	
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var TableMaker = (function () {
+	    function TableMaker(tableContainer, maper) {
+	        this.numberColumn = true;
+	        this.maper = maper;
+	        this.tableContainer = tableContainer;
+	        this.curentColumnNumber = 1;
+	    }
+	    TableMaker.prototype.makeHeaderRow = function () {
+	        var result = "";
+	        result += "<tr>";
+	        result += this.makeHeadersByMaper();
+	        result += "</tr>";
+	        return result;
+	    };
+	    TableMaker.prototype.makeHeadersByMaper = function () {
+	        var result = this.numberColumn ? "<th>#</th>" : "";
+	        for (var _i = 0, _a = this.maper.list; _i < _a.length; _i++) {
+	            var item = _a[_i];
+	            result += "<th>" + item.headerName + "</th>";
+	        }
+	        return result;
+	    };
+	    TableMaker.prototype.makeTableRow = function (model) {
+	        var row = document.createElement("tr");
+	        row.innerHTML = this.maper ? this.makeTableDataByMaper(model) : this.makeTableDataByDefault(model);
+	        return row;
+	    };
+	    TableMaker.prototype.makeClassAttribute = function (classValue) {
+	        return "" + (classValue ? "class=" + classValue : '');
+	    };
+	    TableMaker.prototype.addRows = function (model) {
+	        for (var _i = 0, model_1 = model; _i < model_1.length; _i++) {
+	            var item = model_1[_i];
+	            this.addRow(item);
+	        }
+	    };
+	    TableMaker.prototype.fillTableFrom = function (model, mode) {
+	        if (mode === void 0) { mode = InsertionMode.Replace; }
+	        switch (mode) {
+	            case InsertionMode.Append:
+	                this.addRows(model);
+	                break;
+	            case InsertionMode.Replace:
+	                this.tableElement.innerHTML = '';
+	                this.addHeader();
+	                this.addRows(model);
+	                break;
+	        }
+	    };
+	    TableMaker.prototype.addRow = function (model) {
+	        this.tableElement.children[0].appendChild(this.makeTableRow(model));
+	    };
+	    TableMaker.prototype.addHeader = function () {
+	        this.tableElement.innerHTML = this.makeHeaderRow();
+	    };
+	    TableMaker.prototype.createTabelInContainer = function (tableContainer) {
+	        var container = tableContainer || this.tableContainer;
+	        if (!container)
+	            throw new Error("I can not insert a table into nowhere, tableContainer is undefined");
+	        var table = document.createElement("table");
+	        if (this.tableClass)
+	            table.className = this.tableClass;
+	        this.tableElement = table;
+	        container.appendChild(table);
+	    };
+	    TableMaker.prototype.makeTableDataByDefault = function (model) {
+	        var result = this.addRowCounter();
+	        for (var propName in model) {
+	            result += "<td>" + model[propName] + "</td>";
+	        }
+	        return result;
+	    };
+	    TableMaker.prototype.makeTableDataByMaper = function (model) {
+	        var result = this.addRowCounter();
+	        for (var _i = 0, _a = this.maper.list; _i < _a.length; _i++) {
+	            var item = _a[_i];
+	            result += "<td>" + model[item.propertyName] + "</td>";
+	        }
+	        return result;
+	    };
+	    TableMaker.prototype.addRowCounter = function () {
+	        return this.numberColumn ? "<td>" + this.curentColumnNumber++ + "</td>" : "";
+	    };
+	    return TableMaker;
+	}());
+	exports.TableMaker = TableMaker;
+	(function (InsertionMode) {
+	    InsertionMode[InsertionMode["Replace"] = 0] = "Replace";
+	    InsertionMode[InsertionMode["Append"] = 1] = "Append";
+	})(exports.InsertionMode || (exports.InsertionMode = {}));
+	var InsertionMode = exports.InsertionMode;
+	var HeaderPropertyMaper = (function () {
+	    function HeaderPropertyMaper(headers, properties) {
+	        this.list = [];
+	        if (headers && properties)
+	            this.addMap(headers, properties);
+	    }
+	    HeaderPropertyMaper.prototype.addMap = function (headers, properties) {
+	        if (headers.length !== properties.length)
+	            throw new Error("Arrays must have the same length");
+	        for (var i = 0; i < headers.length; i++) {
+	            this.list.push(new HeaderProperty(headers[i], properties[i]));
+	        }
+	    };
+	    return HeaderPropertyMaper;
+	}());
+	exports.HeaderPropertyMaper = HeaderPropertyMaper;
+	var HeaderProperty = (function () {
+	    function HeaderProperty(headerName, propertyName) {
+	        this.headerName = headerName;
+	        this.propertyName = propertyName;
+	    }
+	    return HeaderProperty;
+	}());
+	exports.HeaderProperty = HeaderProperty;
+	
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Notifier = (function () {
+	    function Notifier(callback) {
+	        var notifier = $.connection.notificationHub;
+	        notifier.client.displayMessage = callback;
+	        $.connection.hub.start();
+	    }
+	    return Notifier;
+	}());
+	exports.Notifier = Notifier;
+	
 
 /***/ }
 /******/ ]);
+//# sourceMappingURL=index.js.map

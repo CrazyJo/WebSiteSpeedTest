@@ -1,6 +1,6 @@
 ﻿using Core.Model;
 using Microsoft.AspNet.SignalR;
-using WebSiteSpeedTest.Models;
+using WebSiteSpeedTest.Infrastructure.Extensions;
 
 namespace WebSiteSpeedTest.Infrastructure
 {
@@ -11,7 +11,7 @@ namespace WebSiteSpeedTest.Infrastructure
         public void DisplayMessage(MeasurementResult message)
         {
             // todo: исправить что б отправлял сообщегия только текущему юзеру
-            _hubContextcontext.Clients.All.displayMessage(new MeasurementResultViewModel(message.Url, $"{message.MinTime.TotalSeconds:N2}", $"{message.MaxTime.TotalSeconds:N2}"));
+            _hubContextcontext.Clients.All.displayMessage(message.ToViewModel());
         }
     }
 }

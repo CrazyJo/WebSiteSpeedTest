@@ -20,12 +20,12 @@ module.exports = {
         ]
     },
     //watch: NODE_ENV == "development",
-    watch: false,
+    watch: true,
     watchOptions: {
         aggregateTimeout: 100
     },
     //devtool: NODE_ENV == "development" ? "eval" : null,
-    devtool: "cheap-module-eval-source-map",
+    devtool: "cheap-module-source-map", // "cheap-module-source-map"
     plugins:[
         new webpack.NoErrorsPlugin()
         //new webpack.optimize.CommonsChunkPlugin({

@@ -9,7 +9,7 @@ namespace WebSiteSpeedTest.Infrastructure.Extensions
     {
         public static MeasurementResultViewModel ToViewModel(this MeasurementResult input)
         {
-            return new MeasurementResultViewModel(input.Url, $"{input.MinTime.TotalSeconds:N2}", $"{input.MaxTime.TotalSeconds:N2}");
+            return new MeasurementResultViewModel(input.Url, input.MinTime.TotalSeconds, input.MaxTime.TotalSeconds);
         }
 
         public static HistoryPageViewModel<IEnumerable<T>> GetHistoryPage<T>(this IList<T> source, int startIndex, int pageCapacity, string callBackUrl, string historyRowId = null)
