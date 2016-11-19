@@ -21,20 +21,17 @@ export class ChartDisplayer extends ElementDisplayer<MeasurementsViewModel>
     {
         this.replaceChartData(this.splitModel());
         this.chart.update();
-        this.modelParts = new ResultPack();
-        this.replaceChartData(this.modelParts);
     }
 
     protected displayFromOuterModel<T extends MeasurementResult>(model: T)
     {
-            this.updateChart(model);
+        this.updateChart(model);
     }
 
-    private initAndDisplay(model: MeasurementResult)
+    clear()
     {
-        this.updateModelParts(model);
-        this.show();
-        this.chart.create();
+        this.modelParts = new ResultPack();
+        this.replaceChartData(this.modelParts);
     }
 
     private updateModelParts(value: MeasurementResult)
@@ -95,10 +92,10 @@ export class ChartDisplayer extends ElementDisplayer<MeasurementsViewModel>
     private chartInit(divId: HTMLElement)
     {
         let container = $(divId);
-        let w = container.width();
-        let h = container.height();
+        let w = 975;
+        let h = 450;
         // hide the char container element
-        this.hide();
+        container.hide();
 
         this.chart = new Chart();
         let layout = {

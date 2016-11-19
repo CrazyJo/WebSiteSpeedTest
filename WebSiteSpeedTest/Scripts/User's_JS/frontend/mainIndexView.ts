@@ -10,63 +10,106 @@ import { Notifier } from "./infrastructure/signalR"
 $(document)
     .ready(() =>
     {
-        debugger;
-        let wLoader = $("#wait_loader");
+        let inputUrlErorrs = $("#inputUrlErorrs");
+        let startBtnWaiter = $("#startTestWaiter");
+        startBtnWaiter.hide();
+        let stBtnDefText = $("#startTestDefaultText");
+        let startBtn = $("#startTestBtn");
+        let testTrovider = startBtn.attr('data-url');
+        let inputUrl = $("#input_url");
 
-        let disolayer = new Displayer("#chartContainer", "#tableContainer");
+        let modalWaiter = $("#modalWaiter");
+        modalWaiter.hide();
+
+        let displayer = new Displayer("#chartContainer", "#tableContainer");
 
         let notifier = new Notifier((m) =>
         {
-            disolayer.visualize(m);
+            displayer.show();
+            displayer.visualize(m);
         });
 
-        $("#ajaxComputeLink")
-            .click(function (event)
+        startBtn
+            .click((e) =>
             {
-                event.preventDefault();
-                wLoader.show();
-                disolayer.clean();
+                e.preventDefault();
+                let value = inputUrl.val();
+                let isValueValid = value.match(/^(ftp|http|https):\/\/[^ "]+$/);
 
-                let ajMeth = $(this).attr('data-ajax-method');
-                let tUrl = $(this).attr('href');
-                let inputData = $("#input_url").val();
+                if (isValueValid)
+                {
+                    inputUrl.removeClass("field-error");
+                    startBtnWaiter.show();
+                    stBtnDefText.hide();
+                    inputUrlErorrs.html("");
 
-                $.ajax({
-                    type: ajMeth,
-                    url: tUrl,
-                    data: { url: inputData }
-                })
-                    .then((e: Array<Model.MeasurementResult>) =>
-                    {
-                        wLoader.hide();
-                        disolayer.sortAndDisplay();
+                    displayer.clean();
+
+                    $.ajax({
+                        type: "POST",
+                        url: testTrovider,
+                        data: {
+                            url: value,
+                            connectionId: notifier.connectionId
+                        },
+                        success: (e) =>
+                        {
+                            if (e)
+                            {
+                                inputUrlErorrs.html(e);
+                                startBtnWaiter.hide();
+                                stBtnDefText.show();
+                                inputUrl.addClass("field-error");
+                            }
+                            else
+                            {
+                                startBtnWaiter.hide();
+                                stBtnDefText.show();
+
+                                displayer.sortAndDisplay();
+                            }
+                        },
+                        error: (e) =>
+                        {
+                            startBtnWaiter.hide();
+                            stBtnDefText.show();
+                            inputUrl.addClass("field-error");
+
+                            displayer.hide();
+                        }
                     });
-
-                disolayer.show();
+                }
+                else
+                {
+                    inputUrl.addClass("field-error");
+                }
             });
 
         $("#historyBtn")
             .click(function ()
             {
+                modalWaiter.show();
                 let updateTarget: string = $(this).attr('data-update-custom');
                 let el = $(updateTarget);
                 $.ajax({
                     type: $(this).attr('data-ajax-method'),
-                    url: $(this).attr('data-url')
-                })
-                    .then(e =>
+                    url: $(this).attr('data-url'),
+                    success: e =>
                     {
+                        modalWaiter.hide();
                         el.html(e);
 
                         // find pager's btn and set handlers
                         Initializer.pagerInit(updateTarget + " ul.pager a", "#historyTable");
-                    });
+                    }
+                });
             });
 
         let historyConteiner = document.querySelector("#historyContainer");
         historyConteiner.addEventListener("click",
             (arg: MouseEvent) =>
             {
+                arg.preventDefault();
                 let eventSource = $(arg.target);
 
                 if (eventSource.is("a") &&
@@ -75,6 +118,7 @@ $(document)
                 {
                     let rowId = eventSource.attr('href');
                     let uri = eventSource.attr('data-url');
+
                     Ajax.run(Enums.HttpMethod.POST,
                         uri,
                         {
@@ -91,7 +135,6 @@ $(document)
                             Initializer.pagerInit(rowId + " ul.pager a", "#sitemapTable");
                         });
                 }
-                arg.preventDefault();
             });
     });
 

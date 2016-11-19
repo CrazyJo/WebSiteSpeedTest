@@ -6,7 +6,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using Core.Repository;
 
-
 namespace Data
 {
     public class Repo<T> : IRepo<T> where T : class , new()

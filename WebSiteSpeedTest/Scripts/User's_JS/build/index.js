@@ -53,47 +53,82 @@
 	var signalR_1 = __webpack_require__(13);
 	$(document)
 	    .ready(function () {
-	    debugger;
-	    var wLoader = $("#wait_loader");
-	    var disolayer = new displayer_1.Displayer("#chartContainer", "#tableContainer");
+	    var inputUrlErorrs = $("#inputUrlErorrs");
+	    var startBtnWaiter = $("#startTestWaiter");
+	    startBtnWaiter.hide();
+	    var stBtnDefText = $("#startTestDefaultText");
+	    var startBtn = $("#startTestBtn");
+	    var testTrovider = startBtn.attr('data-url');
+	    var inputUrl = $("#input_url");
+	    var modalWaiter = $("#modalWaiter");
+	    modalWaiter.hide();
+	    var displayer = new displayer_1.Displayer("#chartContainer", "#tableContainer");
 	    var notifier = new signalR_1.Notifier(function (m) {
-	        disolayer.visualize(m);
+	        displayer.show();
+	        displayer.visualize(m);
 	    });
-	    $("#ajaxComputeLink")
-	        .click(function (event) {
-	        event.preventDefault();
-	        wLoader.show();
-	        disolayer.clean();
-	        var ajMeth = $(this).attr('data-ajax-method');
-	        var tUrl = $(this).attr('href');
-	        var inputData = $("#input_url").val();
-	        $.ajax({
-	            type: ajMeth,
-	            url: tUrl,
-	            data: { url: inputData }
-	        })
-	            .then(function (e) {
-	            wLoader.hide();
-	            disolayer.sortAndDisplay();
-	        });
-	        disolayer.show();
+	    startBtn
+	        .click(function (e) {
+	        e.preventDefault();
+	        var value = inputUrl.val();
+	        var isValueValid = value.match(/^(ftp|http|https):\/\/[^ "]+$/);
+	        if (isValueValid) {
+	            inputUrl.removeClass("field-error");
+	            startBtnWaiter.show();
+	            stBtnDefText.hide();
+	            inputUrlErorrs.html("");
+	            displayer.clean();
+	            $.ajax({
+	                type: "POST",
+	                url: testTrovider,
+	                data: {
+	                    url: value,
+	                    connectionId: notifier.connectionId
+	                },
+	                success: function (e) {
+	                    if (e) {
+	                        inputUrlErorrs.html(e);
+	                        startBtnWaiter.hide();
+	                        stBtnDefText.show();
+	                        inputUrl.addClass("field-error");
+	                    }
+	                    else {
+	                        startBtnWaiter.hide();
+	                        stBtnDefText.show();
+	                        displayer.sortAndDisplay();
+	                    }
+	                },
+	                error: function (e) {
+	                    startBtnWaiter.hide();
+	                    stBtnDefText.show();
+	                    inputUrl.addClass("field-error");
+	                    displayer.hide();
+	                }
+	            });
+	        }
+	        else {
+	            inputUrl.addClass("field-error");
+	        }
 	    });
 	    $("#historyBtn")
 	        .click(function () {
+	        modalWaiter.show();
 	        var updateTarget = $(this).attr('data-update-custom');
 	        var el = $(updateTarget);
 	        $.ajax({
 	            type: $(this).attr('data-ajax-method'),
-	            url: $(this).attr('data-url')
-	        })
-	            .then(function (e) {
-	            el.html(e);
-	            // find pager's btn and set handlers
-	            initializer_1.Initializer.pagerInit(updateTarget + " ul.pager a", "#historyTable");
+	            url: $(this).attr('data-url'),
+	            success: function (e) {
+	                modalWaiter.hide();
+	                el.html(e);
+	                // find pager's btn and set handlers
+	                initializer_1.Initializer.pagerInit(updateTarget + " ul.pager a", "#historyTable");
+	            }
 	        });
 	    });
 	    var historyConteiner = document.querySelector("#historyContainer");
 	    historyConteiner.addEventListener("click", function (arg) {
+	        arg.preventDefault();
 	        var eventSource = $(arg.target);
 	        if (eventSource.is("a") &&
 	            eventSource.attr("data-toggle") === "collapse" &&
@@ -110,7 +145,6 @@
 	                initializer_1.Initializer.pagerInit(rowId_1 + " ul.pager a", "#sitemapTable");
 	            });
 	        }
-	        arg.preventDefault();
 	    });
 	});
 	
@@ -413,6 +447,7 @@
 	    Displayer.prototype.clean = function () {
 	        this.model.results = [];
 	        this.tableDisplayer.clear();
+	        this.chartDisplayer.clear();
 	    };
 	    Displayer.prototype.sortAndDisplay = function () {
 	        this.model.sortModelExceptFirst();
@@ -602,16 +637,13 @@
 	    ChartDisplayer.prototype.displayFromLocalModel = function () {
 	        this.replaceChartData(this.splitModel());
 	        this.chart.update();
-	        this.modelParts = new ResultPack();
-	        this.replaceChartData(this.modelParts);
 	    };
 	    ChartDisplayer.prototype.displayFromOuterModel = function (model) {
 	        this.updateChart(model);
 	    };
-	    ChartDisplayer.prototype.initAndDisplay = function (model) {
-	        this.updateModelParts(model);
-	        this.show();
-	        this.chart.create();
+	    ChartDisplayer.prototype.clear = function () {
+	        this.modelParts = new ResultPack();
+	        this.replaceChartData(this.modelParts);
 	    };
 	    ChartDisplayer.prototype.updateModelParts = function (value) {
 	        this.modelParts.urls.push(value.url);
@@ -659,10 +691,10 @@
 	    };
 	    ChartDisplayer.prototype.chartInit = function (divId) {
 	        var container = $(divId);
-	        var w = container.width();
-	        var h = container.height();
+	        var w = 975;
+	        var h = 450;
 	        // hide the char container element
-	        this.hide();
+	        container.hide();
 	        this.chart = new chart_1.Chart();
 	        var layout = {
 	            font: {
@@ -781,7 +813,7 @@
 	        this.tableMakerInit();
 	    }
 	    TableDisplayer.prototype.tableMakerInit = function () {
-	        var headers = ["Url", "Min (S)", "Max (s)"];
+	        var headers = ["Url", "Min (s)", "Max (s)"];
 	        var props = ["url", "mintime", "maxtime"];
 	        var maper = new Table.HeaderPropertyMaper(headers, props);
 	        this.tableMaker = new Table.TableMaker(this.htmlElement, maper);
@@ -938,7 +970,10 @@
 	    function Notifier(callback) {
 	        var notifier = $.connection.notificationHub;
 	        notifier.client.displayMessage = callback;
-	        $.connection.hub.start();
+	        var iAm = this;
+	        $.connection.hub.start().done(function () {
+	            iAm.connectionId = $.connection.hub.id;
+	        });
 	    }
 	    return Notifier;
 	}());

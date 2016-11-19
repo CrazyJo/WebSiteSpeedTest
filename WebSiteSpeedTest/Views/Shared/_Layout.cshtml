@@ -4,11 +4,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title – приложение ASP.NET</title>
+    <title>@ViewBag.Title</title>
 
+    <link href="https://fonts.googleapis.com/css?family=Cantora+One" rel="stylesheet">
     @Styles.Render("~/Content/css")
     <script src="~/Scripts/plotly-latest.min.js"></script>
-    <link href="~/Content/lessStyleSheet.less" rel="stylesheet/less" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/media.less" rel="stylesheet/less" />
     @Scripts.Render("~/bundles/less")
 </head>
 <body>
@@ -20,13 +22,29 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Имя приложения", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <div class="logo">
+                    <a href="/">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="" pageAlignment="none" x="0px" y="0px" height="40px" viewBox="0 0 755 140" enable-background="new 0 0 755 140" xml:space="preserve">
+                        <defs />
+                        <g type="LAYER" name="workspace" id="workspace" locked="true" />
+                        <g id="Layer 01" type="LAYER" name="Layer 01">
+                        <text type="textBox" transform="matrix(0.9999999999999998 0 0 1 154.8885742201976 16.384895327263223)" width="614.0868053602624" height="112" stroke-width="13" stroke-miterlimit="3" stroke="none" fill="#FFFFFF" font-family="Cantora One" font-size="90" text-align="left" text-anchor="start">
+                        <tspan x="0" y="90"><![CDATA[Web Speed Test]]></tspan>
+                                </text>
+                        <path transform="matrix(1 0 0 1 6.539920889512366 6.721849653713528)" width="126" height="126" stroke-width="9" stroke-miterlimit="3" stroke="#A8B2BD" fill="none" d="M-1.1368683772161603e-13,63.000000000000114 C-1.1368683772161603e-13,28.206057600000207 28.206057599999895,0 62.99999999999994,0 C97.79394239999999,0 125.99999999999989,28.206057600000207 125.99999999999989,63.000000000000114 C125.99999999999989,97.79394239999999 97.79394239999999,126 62.99999999999994,126 C28.206057599999895,126 -1.1368683772161603e-13,97.79394239999999 -1.1368683772161603e-13,63.000000000000114 Z " />
+                        <path transform="matrix(1 0 0 1 62.53992088951143 62.72184965371516)" width="14" height="14" stroke-width="1.1031371205908562" stroke-miterlimit="3" stroke="rgb(255, 255, 255)" fill="#FFFFFF" d="M0,6.999999999999972 C0,3.1340063999999757 3.1340063999999757,0 6.999999999999943,0 C10.865993599999968,0 14,3.1340063999999757 14,6.999999999999972 C14,10.865993599999996 10.865993599999968,14 6.999999999999943,14 C3.1340063999999757,14 0,10.865993599999996 0,6.999999999999972 Z " />
+                        <path transform="matrix(1 0 0 1 69.53992088951165 69.72184965371503)" width="30.999999999999886" height="31" stroke-width="8" stroke-miterlimit="3" stroke="#FFFFFF" fill="none" d="M0,-2.842170943040401e-14 L30.999999999999886,-31.00000000000003 " />
+                        <path transform="matrix(1 0 0 1 24.539920889515066 24.721849653738424)" width="66.78772969354593" height="75.31815760385265" stroke-width="8" stroke-miterlimit="3" stroke="#007AFF" fill="none" d="M11.745885190840195,75.31815760385265 C4.44951062803744,67.319776202822 0,56.67950810378041 0,45.00000000000004 C0,20.147184 20.147183999999925,-3.552713678800501e-15 44.99999999999994,-3.552713678800501e-15 C52.904118218535174,-3.552713678800501e-15 60.33227298478761,2.037839603780567 66.78772969354593,5.616784206130408 " />
+                        <path transform="matrix(1 0 0 1 24.539920889515066 24.721849653738424)" width="11.882418449593558" height="52.8294504229921" stroke-width="8" stroke-miterlimit="3" stroke="#FF0000" fill="none" d="M84.0591371435275,22.63770740433886 C87.83888462466918,29.225393340881375 89.99999999999994,36.86031862927504 89.99999999999994,45.00000000000004 C89.99999999999994,56.75218272001095 85.49494379027678,67.45215205564655 78.11758155040638,75.46715782733096 " />
+                            </g>
+                        </svg>
+                    </a>
+                </div>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Домашняя страница", "Index", "Home")</li>
-                    <li>@Html.ActionLink("О программе", "About", "Home")</li>
-                    <li>@Html.ActionLink("Контакт", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
             </div>
         </div>
@@ -35,13 +53,12 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year – приложение ASP.NET</p>
+            <p>&copy; @DateTime.Now.Year</p>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
-    @RenderSection("signalR", false)
-    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/bootstrap")
 </body>
 </html>

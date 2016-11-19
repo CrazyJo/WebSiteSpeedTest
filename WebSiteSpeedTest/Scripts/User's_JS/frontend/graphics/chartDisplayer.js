@@ -17,16 +17,13 @@ var ChartDisplayer = (function (_super) {
     ChartDisplayer.prototype.displayFromLocalModel = function () {
         this.replaceChartData(this.splitModel());
         this.chart.update();
-        this.modelParts = new ResultPack();
-        this.replaceChartData(this.modelParts);
     };
     ChartDisplayer.prototype.displayFromOuterModel = function (model) {
         this.updateChart(model);
     };
-    ChartDisplayer.prototype.initAndDisplay = function (model) {
-        this.updateModelParts(model);
-        this.show();
-        this.chart.create();
+    ChartDisplayer.prototype.clear = function () {
+        this.modelParts = new ResultPack();
+        this.replaceChartData(this.modelParts);
     };
     ChartDisplayer.prototype.updateModelParts = function (value) {
         this.modelParts.urls.push(value.url);
@@ -74,10 +71,10 @@ var ChartDisplayer = (function (_super) {
     };
     ChartDisplayer.prototype.chartInit = function (divId) {
         var container = $(divId);
-        var w = container.width();
-        var h = container.height();
+        var w = 975;
+        var h = 450;
         // hide the char container element
-        this.hide();
+        container.hide();
         this.chart = new chart_1.Chart();
         var layout = {
             font: {

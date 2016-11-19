@@ -8,59 +8,58 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Xml;
 using Core.Model;
-using Data;
-using UtilitiesPackage;
-using WebSiteSpeedTest.Hubs;
+using Core;
 
-namespace WebSiteSpeedTest.Infrastructure
+
+namespace UtilitiesPackage
 {
     public class LoadTimeManager : IDisposable
     {
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly ConcurrentBag<SitemapRow> _results = new ConcurrentBag<SitemapRow>();
-        private readonly SignalrWorker<NotificationHub> _displayer = new SignalrWorker<NotificationHub>();
-        private readonly Committer _committer = new Committer();
+        private readonly IMeasurementResultDisplayer _displayer;
+        private readonly IStorage _storage;
         private string _guid;
+
+        public LoadTimeManager(IMeasurementResultDisplayer displayer, IStorage storage)
+        {
+            _displayer = displayer;
+            _storage = storage;
+        }
 
         /// <summary>
         /// It measures the load time of the site and all its references in the sitemap.xml
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<MeasurementResult>> MeasureAsync(string url)
+        public async Task MeasureAsync(string url)
         {
             var dg = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
-            _guid = Guid.NewGuid().ToString();
             var stopwatch = new Stopwatch();
 
+            _guid = Guid.NewGuid().ToString();
+
             var historyRow = await LoadSeveralTimes<HistoryRow>(url);
-            _displayer.DisplayMessage(historyRow);
+            _displayer.Display(historyRow);
             historyRow.Id = _guid;
             historyRow.Date = DateTime.Now;
 
-            stopwatch.Start();
             var loc = await ParseSitemap(url);
-            stopwatch.Stop();
-            stopwatch.Restart();
+            //await loc.Take(1000).ForEachAsync(10, TestAndDisplay);
+            await loc.Take(99).ForEach(TestAndDisplay);
 
-            await loc.Take(10).ForEachAsync(10, TestAndDisplay);
-            //await loc.Take(100).ForEach(TestAndDisplay);
-            stopwatch.Stop();
-
-            _committer.Save(historyRow, _results);
-
-            return _results;
+            _storage.Save(new ResultsPack(historyRow, _results));
         }
 
         async Task TestAndDisplay(string url)
         {
             var item = await LoadSeveralTimes<SitemapRow>(url);
-            _displayer.DisplayMessage(item);
+            _displayer.Display(item);
             item.HistoryRowId = _guid;
             _results.Add(item);
         }
 
-        public virtual async Task<T> LoadSeveralTimes<T>(string url, int timesCount = 3) where T : MeasurementResult, new()
+        public virtual async Task<TResult> LoadSeveralTimes<TResult>(string url, int timesCount = 3) where TResult : MeasurementResult, new()
         {
             var tempQueue = new ConcurrentQueue<TimeSpan>();
 
@@ -75,7 +74,7 @@ namespace WebSiteSpeedTest.Infrastructure
             //});
 
             var orderedQ = tempQueue.OrderBy(e => e);
-            var result = new T
+            var result = new TResult
             {
                 Url = url,
                 MinTime = orderedQ.First(),
@@ -88,35 +87,19 @@ namespace WebSiteSpeedTest.Infrastructure
         public virtual async Task<TimeSpan> LoadTimeMeasuringAsync(string url)
         {
             var sw = new Stopwatch();
-            TimeSpan time = new TimeSpan();
-            try
-            {
-                sw.Start();
-                var t = await _httpClient.GetAsync(url);
-                sw.Stop();
-                time = sw.Elapsed;
-            }
-            catch (Exception e)
-            {
-                ;
-            }
+            var httpClient = new HttpClient();
+            sw.Start();
+            var t = await httpClient.GetAsync(url);
+            sw.Stop();
+            var time = sw.Elapsed;
+            httpClient.Dispose();
 
             return time;
         }
 
         public virtual async Task<IEnumerable<string>> ParseSitemap(string url)
         {
-            var xmlDocs = await SitemapWorker.FindSitemap(url);
-            var list = new List<string>();
-
-            //todo: hardcode, remove First()
-            list.AddRange(await SitemapWorker.ParseSitemapFile(xmlDocs.First()));
-            //foreach (XmlDocument doc in xmlDocs)
-            //{
-            //    list.AddRange(await SitemapWorker.ParseSitemapFile(doc));
-            //}
-
-            return list;
+            return await SitemapWorker.ParseSitemapFile(await SitemapWorker.FindeFirstSitemapDoc(url));
         }
 
         public void Dispose()

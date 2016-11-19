@@ -1,17 +1,23 @@
-﻿using Core.Model;
+﻿using Core;
+using Core.Model;
 using Microsoft.AspNet.SignalR;
 using WebSiteSpeedTest.Infrastructure.Extensions;
 
 namespace WebSiteSpeedTest.Infrastructure
 {
-    public class SignalrWorker<THub> where THub : Hub
+    public class SignalrWorker<THub> : IMeasurementResultDisplayer where THub : Hub
     {
-        readonly IHubContext _hubContextcontext = GlobalHost.ConnectionManager.GetHubContext<THub>();
+        private readonly IHubContext _hubContextcontext = GlobalHost.ConnectionManager.GetHubContext<THub>();
+        private readonly string _connectionId;
 
-        public void DisplayMessage(MeasurementResult message)
+        public SignalrWorker(string connectionId)
         {
-            // todo: исправить что б отправлял сообщегия только текущему юзеру
-            _hubContextcontext.Clients.All.displayMessage(message.ToViewModel());
+            _connectionId = connectionId;
+        }
+
+        public void Display(MeasurementResult message)
+        {
+            _hubContextcontext.Clients.Client(_connectionId).displayMessage(message.ToViewModel());
         }
     }
 }

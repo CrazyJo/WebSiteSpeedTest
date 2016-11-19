@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Core.Collection;
 
 namespace UtilitiesPackage
 {
@@ -21,34 +22,48 @@ namespace UtilitiesPackage
             Volatile.Read(ref FoundUrl)?.Invoke(url);
         }
 
+        public static async Task<XmlDocument> FindeFirstSitemapDoc(string url)
+        {
+            XmlDocument results = null;
+            var domain = url.GetDomain();
+
+            var sitemapXml = await LoadDoc(domain + "/sitemap.xml").ConfigureAwait(false);
+            if (sitemapXml != null)
+                results = sitemapXml;
+            else
+            {
+                var response = await LoadPage(domain + "/robots.txt").ConfigureAwait(false);
+                if (response != null)
+                {
+                    var content = await response.ReadAsStringAsync().ConfigureAwait(false);
+                    var path = content.GetSitemapUrls().First();
+                    results = await LoadDoc(path).ConfigureAwait(false);
+                }
+            }
+
+            return results;
+        }
+
         public static async Task<IEnumerable<XmlDocument>> FindSitemap(string url)
         {
             var results = new ConcurrentQueue<XmlDocument>();
             var domain = url.GetDomain();
 
-            try
+            var sitemapXml = await LoadDoc(domain + "/sitemap.xml").ConfigureAwait(false);
+            if (sitemapXml != null)
+                results.Enqueue(sitemapXml);
+            else
             {
-                results.Enqueue(await LoadDoc(domain + "/sitemap.xml").ConfigureAwait(false));
-            }
-            catch (Exception e)
-            {
-                // doesn't contain a "sitemap.xml"
-                try
+                var response = await LoadPage(domain + "/robots.txt").ConfigureAwait(false);
+                if (response != null)
                 {
-                    var content = await HttpClient.GetStringAsync(domain + "/robots.txt").ConfigureAwait(false);
-
-
-                    await content.GetUrlsFromRobotsTxt().ForEach(async uri =>
+                    var content = await response.ReadAsStringAsync().ConfigureAwait(false);
+                    await content.GetSitemapUrls().ForEach(async uri =>
                     {
                         var doc = await LoadDoc(uri);
                         if (doc != null)
                             results.Enqueue(doc);
                     }).ConfigureAwait(false);
-                }
-                catch (Exception exception)
-                {
-                    // doesn't contain a "robots.txt"
-                    ;
                 }
             }
 
@@ -57,37 +72,46 @@ namespace UtilitiesPackage
 
         static async Task<XmlDocument> LoadDoc(string uri)
         {
-            var tempDoc = new XmlDocument();
-            var responseStream = await HttpClient.GetStreamAsync(uri).ConfigureAwait(false);
+            var response = await LoadPage(uri);
+            if (response == null) return null;
+            var responseStream = await response.ReadAsStreamAsync().ConfigureAwait(false);
 
-            try
+            var tempDoc = new XmlDocument();
+            var extension = uri.GetExtension();
+
+            switch (extension)
             {
-                tempDoc.Load(responseStream);
-            }
-            catch (XmlException)
-            {
-                //todo: throw AggregateException, need to fix
-                using (var zip = new GZipStream(responseStream, CompressionMode.Decompress))
-                    tempDoc.Load(zip);
+                case ".xml":
+                    tempDoc.Load(responseStream);
+                    break;
+                case ".gz":
+                    using (var zip = new GZipStream(responseStream, CompressionMode.Decompress))
+                        tempDoc.Load(zip);
+                    break;
+                default:
+                    throw new InvalidOperationException("Сan not load a document with this extension");
             }
 
             return tempDoc;
+        }
+
+        static async Task<HttpContent> LoadPage(string uri)
+        {
+            var response = await HttpClient.GetAsync(uri).ConfigureAwait(false);
+            if (response.IsSuccessStatusCode)
+                return response.Content;
+            return null;
         }
 
         public static async Task<IEnumerable<string>> ParseSitemapFile(XmlDocument rssXmlDoc)
         {
             if (rssXmlDoc == null)
                 throw new ArgumentNullException(nameof(rssXmlDoc));
-
             var root = rssXmlDoc.DocumentElement;
-
             if (root == null) throw new InvalidOperationException("This is an empty xml file");
-
             var localName = root.LocalName;
-
             if (localName.Equals("urlset", StringComparison.InvariantCultureIgnoreCase))
                 return await ParseUrlset(rssXmlDoc, GetNamespace(rssXmlDoc)).ConfigureAwait(false);
-           
             if (!root.LocalName.Equals("sitemapindex", StringComparison.InvariantCultureIgnoreCase))
                 throw new InvalidOperationException(nameof(rssXmlDoc) + " it is not sitemap.xml");
 
@@ -126,11 +150,8 @@ namespace UtilitiesPackage
                 throw new ArgumentNullException(nameof(rssXmlDoc));
 
             var root = rssXmlDoc.DocumentElement;
-
             if (root != null)
-            {
                 return await GetUrls(root.ChildNodes, nsmgr, true);
-            }
 
             return null;
         }
@@ -148,9 +169,12 @@ namespace UtilitiesPackage
 
                 if (locNode == null) return;
                 var url = locNode.InnerText;
+
                 if (enableEvent)
                     OnFoundUrl(url);
+
                 resultList.Enqueue(url);
+
             }).ConfigureAwait(false);
 
             return resultList;

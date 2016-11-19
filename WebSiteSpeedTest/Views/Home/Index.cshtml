@@ -1,40 +1,49 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Web Speed Test";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-offset-4 col-md-5">
-            <div class="form_head ">
-                <div class="input-group">
-                    <input class="form-control" id="input_url" placeholder="www.example.com" value="http://www.mk.ru/" />@*http://moscow.megafon.ru/*@
-                    <span class="input-group-btn">
-                        @Html.ActionLink("Start test", "Compute", "Home", null, new
-                   {
-                       @class = "btn btn-default",
-                       id = "ajaxComputeLink",
-                       data_ajax = "true",
-                       data_ajax_method = "POST",
-                       data_ajax_update = "#outPut"
-                   })
-                    </span>
+<section class="controls">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-centered">
+                <div class="inline-form-group">
+                    <div id="fieldUrl">
+                        <input class="field" id="input_url" type="text" placeholder="www.example.com" />
+                        <label id="inputUrlErorrs" class="error-output"></label>
+                    </div>
+                    <button id="startTestBtn" class="button" data-url=@Url.Action("Compute")>
+                        <i id="startTestWaiter" class="fa fa-circle-o-notch fa-spin"></i>
+                        <span id="startTestDefaultText">Start test</span>
+                    </button>
+                </div>
+                <div id="fixedContainer">
+                    <button id="historyBtn" class="" data-toggle="modal" data-target="#historyModal" data-update-custom="#historyContainer" data-url=@Url.Action("History")>
+                        <span id="lgHistoryMarker">History</span>
+                        <i id="smHistoryMarker" class="fa fa-history" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
-            <img id="wait_loader" src="~/Content/Images/1 (1).gif" />
-
-            @* History Button *@
-            <button id="historyBtn" class="btn btn-info historyBtn" data-toggle="modal" data-target="#historyModal" data-update-custom="#historyContainer" data-url=@Url.Action("History")>History</button>
         </div>
     </div>
+</section>
 
-    <section id="graphics" class="row">
-        <div id="chartContainer"></div>
-    </section>
+<section id="graphics">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-offset-1 col-md-10">
+                <div id="chartContainer" class="hidden-sm hidden-xs"></div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <section id="sectionTableResult" class="row">
-        <div id="tableContainer" class="col-md-offset-1 col-md-10"></div>
-    </section>
-</div>
+<section id="sectionTableResult">
+    <div class="container">
+        <div class="row">
+            <div id="tableContainer" class="col-md-offset-1 col-md-10"></div>
+        </div>
+    </div>
+</section>
 
 <!-- Modal -->
 <div class="modal fade" id="historyModal" role="dialog">
@@ -48,21 +57,19 @@
             </div>
 
             <!-- Modal body-->
-            <div id="historyContainer" class="modal-body">
+            <div class="modal-body">
+                <div id="modalWaiter" class="text-center">
+                    <i class="fa fa-cog fa-spin fa-5x fa-fw"></i>
+                </div>
+                <div id="historyContainer"></div>
             </div>
         </div>
 
     </div>
 </div>
 
-
-@section signalR{
+@section scripts{
     @Scripts.Render("~/bundles/signalR")
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/User's_JS/build/index.js"></script>
-    @*<script src="~/Scripts/User's_JS/indexSignalR.js"></script>*@
-}
-
-@section scripts{
-    @*<script src="~/Scripts/User's_JS/indexView.js"></script>*@
 }

@@ -5,7 +5,14 @@ namespace UtilitiesPackage
 {
     public static class RegexExtensions
     {
-        public static IEnumerable<string> GetUrlsFromRobotsTxt(this string content)
+        public static string GetExtension(this string value)
+        {
+            var r = new Regex(@"\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$");
+            return r.Match(value).Value;
+
+        }
+
+        public static IEnumerable<string> GetSitemapUrls(this string content)
         {
             var result = new List<string>();
 

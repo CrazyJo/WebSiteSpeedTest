@@ -22,6 +22,18 @@ namespace UtilitiesPackage
             return Task.WhenAll(tasks);
         }
 
+        public static Task ForAsync(int fromInclusive, int toExclusive, Action<int> body)
+        {
+            var tasks = new List<Task>();
+
+            for (; fromInclusive < toExclusive; fromInclusive++)
+            {
+                var i = fromInclusive;
+                tasks.Add(Task.Run(() => body(i)));
+            }
+            return Task.WhenAll(tasks);
+        }
+
         public static Task ForEachAsync<T>(this IEnumerable<T> source, int partitionCount, Func<T, Task> body)
         {
             return Task.WhenAll(
@@ -30,10 +42,11 @@ namespace UtilitiesPackage
                 {
                     using (partition)
                         while (partition.MoveNext())
-                            await body(partition.Current).ContinueWith(t =>
-                            {
-                                //observe exceptions
-                            });
+                            await body(partition.Current);
+                            //.ContinueWith(t =>
+                            //{
+                            //    //observe exceptions
+                            //});
                 }));
         }
 
@@ -48,6 +61,5 @@ namespace UtilitiesPackage
 
             return Task.WhenAll(tasks);
         }
-
     }
 }

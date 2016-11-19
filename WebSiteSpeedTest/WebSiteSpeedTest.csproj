@@ -209,7 +209,6 @@
     <Compile Include="Infrastructure\Enums.cs" />
     <Compile Include="Infrastructure\Extensions\ToViewModelExtensions.cs" />
     <Compile Include="Infrastructure\JsonNetResult.cs" />
-    <Compile Include="Infrastructure\LoadTimeManager.cs" />
     <Compile Include="Infrastructure\RenderHelper.cs" />
     <Compile Include="Infrastructure\SignalrWorker.cs" />
     <Compile Include="Models\HistoryPagerViewModel.cs" />
@@ -223,8 +222,11 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Images\1 %281%29.gif" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\Images\brand_logo.png" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -245,6 +247,12 @@
     <Content Include="Scripts\plotly-latest.min.js" />
     <Content Include="Scripts\User%27s_JS\build\index.js" />
     <Content Include="webpack.config.js" />
+    <Content Include="Content\media.less" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

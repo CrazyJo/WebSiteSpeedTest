@@ -13,7 +13,7 @@ var TableDisplayer = (function (_super) {
         this.tableMakerInit();
     }
     TableDisplayer.prototype.tableMakerInit = function () {
-        var headers = ["Url", "Min (S)", "Max (s)"];
+        var headers = ["Url", "Min (s)", "Max (s)"];
         var props = ["url", "mintime", "maxtime"];
         var maper = new Table.HeaderPropertyMaper(headers, props);
         this.tableMaker = new Table.TableMaker(this.htmlElement, maper);

@@ -66,10 +66,6 @@
       <Project>{d68b51d0-c19c-4f34-9b3b-3a27cb5f67c9}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UtilitiesPackage\UtilitiesPackage.csproj">
-      <Project>{a5cfbe96-e12a-42ae-abee-0be8804df057}</Project>
-      <Name>UtilitiesPackage</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

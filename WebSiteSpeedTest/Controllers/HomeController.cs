@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Core.Json;
 using WebSiteSpeedTest.Infrastructure;
 using Core.Model;
 using Data;
-using Newtonsoft.Json;
-using UtilitiesPackage;
 using WebSiteSpeedTest.Models;
 using WebSiteSpeedTest.Infrastructure.Extensions;
+using UtilitiesPackage;
+using WebSiteSpeedTest.Hubs;
 
 namespace WebSiteSpeedTest.Controllers
 {
@@ -27,24 +25,18 @@ namespace WebSiteSpeedTest.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Compute(string url)
+        public async Task<ActionResult> Compute(string url, string connectionId)
         {
-            IEnumerable<MeasurementResult> vModel;
-
-            using (var ltManager = new LoadTimeManager())
+            var ltManager = new LoadTimeManager(new SignalrWorker<NotificationHub>(connectionId), _committer);
+            try
             {
-                vModel = await ltManager.MeasureAsync(url);
+                await ltManager.MeasureAsync(url);
             }
-
-            return new JsonNetResult(vModel.OrderByDescending(e => e.MinTime))
+            catch (Exception)
             {
-                SerializerSettings = new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                    ContractResolver = new TypeOnlyContractResolver<MeasurementResult>(),
-                    Converters = new List<JsonConverter> { new TimeSpanToTotalSecondsConverter() }
-                }
-            };
+                return Content("Invalid url");
+            }
+            return new EmptyResult();
         }
 
         public ActionResult History()
@@ -59,7 +51,7 @@ namespace WebSiteSpeedTest.Controllers
         {
             var model = GetPartOfHistory(startIndex);
             var content = RenderHelper.PartialView(this, "_HistoryTable", model.Content);
-            var result = new HistoryPageViewModel<string> {Content = content, HistoryPager = model.HistoryPager};
+            var result = new HistoryPageViewModel<string> { Content = content, HistoryPager = model.HistoryPager };
 
             return new JsonNetResult(result);
         }

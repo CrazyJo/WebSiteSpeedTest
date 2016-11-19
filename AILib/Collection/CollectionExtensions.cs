@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UtilitiesPackage
+namespace Core.Collection
 {
     public static class CollectionExtensions
     {

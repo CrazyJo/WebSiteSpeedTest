@@ -30,6 +30,7 @@ export class Displayer
     {
         this.model.results = [];
         this.tableDisplayer.clear();
+        this.chartDisplayer.clear();
     }
 
     sortAndDisplay()

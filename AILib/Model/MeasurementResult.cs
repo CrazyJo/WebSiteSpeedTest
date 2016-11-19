@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace Core.Model
 {
@@ -16,13 +15,13 @@ namespace Core.Model
             MaxTime = maxTime;
         }
 
-        [JsonProperty("url")]
         public string Url { get; set; }
-
-        [JsonProperty("mintime")]
         public TimeSpan MinTime { get; set; }
-
-        [JsonProperty("maxtime")]
         public TimeSpan MaxTime { get; set; }
+
+        public override string ToString()
+        {
+            return $"{MinTime.TotalSeconds:N2}, {MaxTime.TotalSeconds:N2}";
+        }
     }
 }

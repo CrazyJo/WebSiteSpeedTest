@@ -75,14 +75,22 @@ namespace UtilitiesPackage
                 new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = degreeOfParallelism });
 
             for (; fromInclusive < toExclusive; fromInclusive++)
-            {
                 workerBlock.Post(fromInclusive);
-            }
 
             workerBlock.Complete();
-
             return workerBlock.Completion;
         }
 
+        public static Task For(int fromInclusive, int toExclusive, Action<int> body)
+        {
+            var workerBlock = new ActionBlock<int>(body, 
+                new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = degreeOfParallelism });
+
+            for (; fromInclusive < toExclusive; fromInclusive++)
+                workerBlock.Post(fromInclusive);
+
+            workerBlock.Complete();
+            return workerBlock.Completion;
+        }
     }
 }

@@ -16,7 +16,7 @@ export class TableDisplayer extends ElementDisplayer<MeasurementsViewModel>
 
     private tableMakerInit()
     {
-        let headers = ["Url", "Min (S)", "Max (s)"];
+        let headers = ["Url", "Min (s)", "Max (s)"];
         let props = ["url", "mintime", "maxtime"];
         let maper = new Table.HeaderPropertyMaper(headers, props);
 

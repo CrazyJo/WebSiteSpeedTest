@@ -7,47 +7,81 @@ var displayer_1 = require("./graphics/displayer");
 var signalR_1 = require("./infrastructure/signalR");
 $(document)
     .ready(function () {
-    debugger;
-    var wLoader = $("#wait_loader");
-    var disolayer = new displayer_1.Displayer("#chartContainer", "#tableContainer");
+    var inputUrlErorrs = $("#inputUrlErorrs");
+    var startBtnWaiter = $("#startTestWaiter");
+    var stBtnDefText = $("#startTestDefaultText");
+    startBtnWaiter.hide();
+    var startBtn = $("#startTestBtn");
+    var testTrovider = startBtn.attr('data-url');
+    var inputUrl = $("#input_url");
+    var modalWaiter = $("#modalWaiter");
+    modalWaiter.hide();
+    var displayer = new displayer_1.Displayer("#chartContainer", "#tableContainer");
     var notifier = new signalR_1.Notifier(function (m) {
-        disolayer.visualize(m);
+        displayer.show();
+        displayer.visualize(m);
     });
-    $("#ajaxComputeLink")
-        .click(function (event) {
-        event.preventDefault();
-        wLoader.show();
-        disolayer.clean();
-        var ajMeth = $(this).attr('data-ajax-method');
-        var tUrl = $(this).attr('href');
-        var inputData = $("#input_url").val();
-        $.ajax({
-            type: ajMeth,
-            url: tUrl,
-            data: { url: inputData }
-        })
-            .then(function (e) {
-            wLoader.hide();
-            disolayer.sortAndDisplay();
-        });
-        disolayer.show();
+    startBtn
+        .click(function (e) {
+        e.preventDefault();
+        var value = inputUrl.val();
+        var isValueValid = value.match(/^(ftp|http|https):\/\/[^ "]+$/);
+        if (isValueValid) {
+            inputUrl.removeClass("field-error");
+            startBtnWaiter.show();
+            stBtnDefText.hide();
+            inputUrlErorrs.html("");
+            displayer.clean();
+            $.ajax({
+                type: "POST",
+                url: testTrovider,
+                data: {
+                    url: value,
+                    connectionId: notifier.connectionId
+                },
+                success: function (e) {
+                    if (e) {
+                        inputUrlErorrs.html(e);
+                        startBtnWaiter.hide();
+                        stBtnDefText.show();
+                    }
+                    else {
+                        startBtnWaiter.hide();
+                        stBtnDefText.show();
+                        displayer.sortAndDisplay();
+                    }
+                },
+                error: function (e) {
+                    startBtnWaiter.hide();
+                    stBtnDefText.show();
+                    inputUrl.addClass("field-error");
+                    displayer.hide();
+                }
+            });
+        }
+        else {
+            inputUrl.addClass("field-error");
+        }
     });
     $("#historyBtn")
         .click(function () {
+        modalWaiter.show();
         var updateTarget = $(this).attr('data-update-custom');
         var el = $(updateTarget);
         $.ajax({
             type: $(this).attr('data-ajax-method'),
-            url: $(this).attr('data-url')
-        })
-            .then(function (e) {
-            el.html(e);
-            // find pager's btn and set handlers
-            initializer_1.Initializer.pagerInit(updateTarget + " ul.pager a", "#historyTable");
+            url: $(this).attr('data-url'),
+            success: function (e) {
+                modalWaiter.hide();
+                el.html(e);
+                // find pager's btn and set handlers
+                initializer_1.Initializer.pagerInit(updateTarget + " ul.pager a", "#historyTable");
+            }
         });
     });
     var historyConteiner = document.querySelector("#historyContainer");
     historyConteiner.addEventListener("click", function (arg) {
+        arg.preventDefault();
         var eventSource = $(arg.target);
         if (eventSource.is("a") &&
             eventSource.attr("data-toggle") === "collapse" &&
@@ -64,7 +98,6 @@ $(document)
                 initializer_1.Initializer.pagerInit(rowId_1 + " ul.pager a", "#sitemapTable");
             });
         }
-        arg.preventDefault();
     });
 });
 //# sourceMappingURL=mainIndexView.js.map

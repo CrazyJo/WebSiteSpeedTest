@@ -19,6 +19,7 @@ var Displayer = (function () {
     Displayer.prototype.clean = function () {
         this.model.results = [];
         this.tableDisplayer.clear();
+        this.chartDisplayer.clear();
     };
     Displayer.prototype.sortAndDisplay = function () {
         this.model.sortModelExceptFirst();

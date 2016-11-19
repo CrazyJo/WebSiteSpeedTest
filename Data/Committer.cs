@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Collection;
 using Core.Model;
-using UtilitiesPackage;
+using Core;
 
 namespace Data
 {
-    public class Committer : IDisposable
+    public class Committer : IDisposable, IStorage
     {
         private readonly Repo<HistoryRow> _historyRepo;
         private readonly Repo<SitemapRow> _smRepo;
@@ -16,6 +17,14 @@ namespace Data
             IDbContextFactory db = new DbContextFactory();
             _historyRepo = new Repo<HistoryRow>(db);
             _smRepo = new Repo<SitemapRow>(db);
+        }
+        public void Save<T>(T data)
+        {
+            var dataPack = data as ResultsPack;
+            if (dataPack != null)
+            {
+                Save(dataPack.HistoryRow, dataPack.SitemapRows);
+            }
         }
 
         public void Save(HistoryRow historyRow, IEnumerable<SitemapRow> sitemapRows)

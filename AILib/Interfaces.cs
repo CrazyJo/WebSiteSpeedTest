@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Core.Model;
 
 namespace Core
 {
-    public interface ILoadTimeManager : IDisposable
+    public interface IMeasurementResultDisplayer
     {
-        /// <summary>
-        /// It measures the load time of the site and all its references in sitemap.xml
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        Task<IEnumerable<TResult>> LoadTimeMeasuringWithSitemapAsync<TResult>(string url);
+        void Display(MeasurementResult message);
     }
 
+    public interface IStorage
+    {
+        void Save<T>(T data);
+    }
 }
