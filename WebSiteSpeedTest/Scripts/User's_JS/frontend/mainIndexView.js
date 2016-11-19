@@ -9,8 +9,8 @@ $(document)
     .ready(function () {
     var inputUrlErorrs = $("#inputUrlErorrs");
     var startBtnWaiter = $("#startTestWaiter");
-    var stBtnDefText = $("#startTestDefaultText");
     startBtnWaiter.hide();
+    var stBtnDefText = $("#startTestDefaultText");
     var startBtn = $("#startTestBtn");
     var testTrovider = startBtn.attr('data-url');
     var inputUrl = $("#input_url");
@@ -39,11 +39,12 @@ $(document)
                     url: value,
                     connectionId: notifier.connectionId
                 },
-                success: function (e) {
-                    if (e) {
-                        inputUrlErorrs.html(e);
+                success: function (v) {
+                    if (v) {
+                        inputUrlErorrs.html(v);
                         startBtnWaiter.hide();
                         stBtnDefText.show();
+                        inputUrl.addClass("field-error");
                     }
                     else {
                         startBtnWaiter.hide();
@@ -51,7 +52,7 @@ $(document)
                         displayer.sortAndDisplay();
                     }
                 },
-                error: function (e) {
+                error: function () {
                     startBtnWaiter.hide();
                     stBtnDefText.show();
                     inputUrl.addClass("field-error");

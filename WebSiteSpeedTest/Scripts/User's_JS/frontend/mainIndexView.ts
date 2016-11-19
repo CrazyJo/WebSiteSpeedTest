@@ -52,11 +52,11 @@ $(document)
                             url: value,
                             connectionId: notifier.connectionId
                         },
-                        success: (e) =>
+                        success: (v) =>
                         {
-                            if (e)
+                            if (v)
                             {
-                                inputUrlErorrs.html(e);
+                                inputUrlErorrs.html(v);
                                 startBtnWaiter.hide();
                                 stBtnDefText.show();
                                 inputUrl.addClass("field-error");
@@ -69,7 +69,7 @@ $(document)
                                 displayer.sortAndDisplay();
                             }
                         },
-                        error: (e) =>
+                        error: () =>
                         {
                             startBtnWaiter.hide();
                             stBtnDefText.show();

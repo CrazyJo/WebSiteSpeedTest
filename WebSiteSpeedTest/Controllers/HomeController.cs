@@ -32,7 +32,7 @@ namespace WebSiteSpeedTest.Controllers
             {
                 await ltManager.MeasureAsync(url);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return Content("Invalid url");
             }

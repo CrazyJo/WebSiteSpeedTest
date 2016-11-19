@@ -46,7 +46,8 @@ namespace UtilitiesPackage
 
             var loc = await ParseSitemap(url);
             //await loc.Take(1000).ForEachAsync(10, TestAndDisplay);
-            await loc.Take(99).ForEach(TestAndDisplay);
+            if (loc.Any())
+                await loc.Take(99).ForEach(TestAndDisplay);
 
             _storage.Save(new ResultsPack(historyRow, _results));
         }
@@ -99,7 +100,10 @@ namespace UtilitiesPackage
 
         public virtual async Task<IEnumerable<string>> ParseSitemap(string url)
         {
-            return await SitemapWorker.ParseSitemapFile(await SitemapWorker.FindeFirstSitemapDoc(url));
+            var xDoc = await SitemapWorker.FindeFirstSitemapDoc(url);
+            if (xDoc != null)
+                return await SitemapWorker.ParseSitemapFile(xDoc);
+            return new List<string>();
         }
 
         public void Dispose()

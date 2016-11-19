@@ -36,7 +36,9 @@ namespace UtilitiesPackage
                 if (response != null)
                 {
                     var content = await response.ReadAsStringAsync().ConfigureAwait(false);
-                    var path = content.GetSitemapUrls().First();
+                    var sitemapUrls = content.GetSitemapUrls();
+                    if (!sitemapUrls.Any()) return null;
+                    var path = sitemapUrls.First();
                     results = await LoadDoc(path).ConfigureAwait(false);
                 }
             }
