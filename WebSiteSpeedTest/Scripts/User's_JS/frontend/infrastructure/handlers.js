@@ -1,5 +1,4 @@
 "use strict";
-var Model = require("../core/model");
 var ajax_1 = require("./ajax");
 var Enums = require("./enums");
 var PagerAjaxHandler = (function () {
@@ -13,10 +12,9 @@ var PagerAjaxHandler = (function () {
             return;
         var ajaxData;
         if (!pagerBtn.rowId)
-            ajaxData = new Model.HistoryAjaxData(pagerBtn.startIndex);
+            ajaxData = { startIndex: pagerBtn.startIndex };
         else
             ajaxData = { historyRowId: pagerBtn.rowId, startIndex: pagerBtn.startIndex };
-        //ajaxData = new Model.SitemapAjaxData(pagerBtn.startIndex, pagerBtn.rowId);
         ajax_1.Ajax.run(Enums.HttpMethod.POST, pagerBtn.url, ajaxData, function (newPage) {
             $(_this.updateTarget).html(newPage.contentHistory);
             _this.pagerBtnStyleToggle(newPage);

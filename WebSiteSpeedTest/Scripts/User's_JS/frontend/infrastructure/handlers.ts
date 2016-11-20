@@ -21,10 +21,9 @@ export class PagerAjaxHandler
 
         let ajaxData;
         if (!pagerBtn.rowId)
-            ajaxData = new Model.HistoryAjaxData(pagerBtn.startIndex);
+            ajaxData = { startIndex: pagerBtn.startIndex };
         else
             ajaxData = { historyRowId: pagerBtn.rowId, startIndex: pagerBtn.startIndex}
-        //ajaxData = new Model.SitemapAjaxData(pagerBtn.startIndex, pagerBtn.rowId);
 
         Ajax.run(Enums.HttpMethod.POST,
             pagerBtn.url,
