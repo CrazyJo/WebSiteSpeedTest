@@ -9,60 +9,6 @@
 @warn-color: spin(@base-color, @distance * 2);
 @success-color: spin(@base-color, @distance * -2);
 
-@screen-lg: 1200px;
-@screen-md: 992px;
-@screen-sm: 768px;
-
-@media screen and (min-width: @screen-md) {
-    #historyBtn {
-        .button();
-    }
-
-    #smHistoryMarker {
-        display: none;
-    }
-
-    #fixedContainer {
-        position: fixed;
-        top: 76px;
-        right: 50px;
-    }
-}
-
-@media screen and (min-width: @screen-sm) and (max-width: @screen-md) {
-    #historyBtn {
-        .round-btn;
-    }
-
-    #lgHistoryMarker {
-        display: none;
-    }
-
-    #fixedContainer {
-        position: fixed;
-        z-index: 9999;
-        top: 8px;
-        right: 8px;
-    }
-}
-
-@media screen and (max-width: @screen-sm) {
-    #historyBtn {
-        .round-btn;
-    }
-
-    #lgHistoryMarker {
-        display: none;
-    }
-
-    #fixedContainer {
-        position: fixed;
-        z-index: 9999;
-        top: 8px;
-        right: 68px;
-    }
-}
-
 .controls {
     margin: 25px 0;
 
