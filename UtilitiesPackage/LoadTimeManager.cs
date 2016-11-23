@@ -34,12 +34,18 @@ namespace UtilitiesPackage
         /// <returns></returns>
         public async Task MeasureAsync(string url)
         {
-            var dg = new ExecutionDataflowBlockOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
-            var stopwatch = new Stopwatch();
-
+            HistoryRow historyRow;
             _guid = Guid.NewGuid().ToString();
 
-            var historyRow = await LoadSeveralTimes<HistoryRow>(url);
+            try
+            {
+                historyRow = await LoadSeveralTimes<HistoryRow>(url);
+            }
+            catch (InvalidOperationException)
+            {
+                throw new Exception("Invalid url");
+            }
+
             _displayer.Display(historyRow);
             historyRow.Id = _guid;
             historyRow.Date = DateTime.Now;
@@ -49,12 +55,27 @@ namespace UtilitiesPackage
             if (loc.Any())
                 await loc.Take(99).ForEach(TestAndDisplay);
 
-            _storage.Save(new ResultsPack(historyRow, _results));
+            try
+            {
+                _storage.Save(new ResultsPack(historyRow, _results));
+            }
+            catch (Exception e)
+            {
+                throw new Exception("db save Exception");
+            }
         }
 
         async Task TestAndDisplay(string url)
         {
-            var item = await LoadSeveralTimes<SitemapRow>(url);
+            SitemapRow item;
+            try
+            {
+                item = await LoadSeveralTimes<SitemapRow>(url);
+            }
+            catch (Exception)
+            {
+                return;
+            }
             _displayer.Display(item);
             item.HistoryRowId = _guid;
             _results.Add(item);

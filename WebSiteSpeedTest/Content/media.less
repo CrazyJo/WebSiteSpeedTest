@@ -20,6 +20,13 @@
     }
 }
 
+.right-top-mixin() {
+    position: fixed;
+    z-index: 9999;
+    top: 8px;
+    right: 8px;
+}
+
 @media screen and (min-width: @screen-sm) and (max-width: @screen-md) {
     #historyBtn {
         .round-btn;
@@ -30,10 +37,7 @@
     }
 
     #fixedContainer {
-        position: fixed;
-        z-index: 9999;
-        top: 8px;
-        right: 8px;
+        .right-top-mixin()
     }
 }
 
@@ -47,9 +51,6 @@
     }
 
     #fixedContainer {
-        position: fixed;
-        z-index: 9999;
-        top: 8px;
-        right: 68px;
+        .right-top-mixin()
     }
 }

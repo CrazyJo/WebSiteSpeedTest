@@ -1,4 +1,7 @@
-﻿const webpack = require("webpack");
+﻿export const NODE_ENV = process.env.NODE_ENV || "development";
+const webpack = require("webpack");
+
+console.log(NODE_ENV);
 
 module.exports = {
     context: __dirname + "/Scripts/User's_JS/frontend",
@@ -18,24 +21,33 @@ module.exports = {
             }
         ]
     },
+    //watch: NODE_ENV == "development",
     watch: false,
     watchOptions: {
         aggregateTimeout: 100
     },
-    devtool: "source-map",
+    //devtool: NODE_ENV == "development" ? "eval" : null,
+    devtool: "cheap-module-source-map", // "cheap-module-source-map"
     plugins: [
         new webpack.NoErrorsPlugin()
+        //new webpack.optimize.CommonsChunkPlugin({
+        //    name: "common",
+        //    chunks: ["mainIndexView"]
+        //})
     ],
     resolve: {
-        extensions: ["", "js", ".ts"]
+        extensions: ["", "js", ".ts"] // ["", ".js", ".ts"]
     }
 };
 
-module.exports.plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-        compress: {
-            warnings: false,
-            drop_console: true,
-            unsafe: true
-        }
-    }));
+if (NODE_ENV == "production")
+{
+    module.exports.plugins.push(
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false,
+                drop_console: true,
+                unsafe: true
+            }
+        }));
+}

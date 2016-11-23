@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using WebSiteSpeedTest.Infrastructure;
 using Core.Model;
 using Data;
+using System.Web;
 using WebSiteSpeedTest.Models;
 using WebSiteSpeedTest.Infrastructure.Extensions;
 using UtilitiesPackage;
@@ -34,7 +35,7 @@ namespace WebSiteSpeedTest.Controllers
             }
             catch (Exception e)
             {
-                return Content("Invalid url");
+                return Content(e.Message);
             }
             return new EmptyResult();
         }

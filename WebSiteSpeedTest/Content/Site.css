@@ -12,6 +12,7 @@
 .inline-form-group {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
 }
 
 #fieldUrl {
@@ -33,11 +34,6 @@
 
 #outPut {
     text-align: center;
-}
-
-#startTestBtn {
-    height: 33.5px;
-    width: 136.236px;
 }
 
 #tableContainer {
