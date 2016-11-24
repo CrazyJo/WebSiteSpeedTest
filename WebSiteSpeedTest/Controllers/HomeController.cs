@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using WebSiteSpeedTest.Infrastructure;
@@ -15,6 +18,15 @@ namespace WebSiteSpeedTest.Controllers
 {
     public class HomeController : Controller
     {
+        public HomeController()
+        {
+            //CultureInfo ci = new CultureInfo("en-US");
+            //Thread.CurrentThread.CurrentCulture = ci;
+            //Thread.CurrentThread.CurrentUICulture = ci;
+
+            WebTool.SetUserLocale();
+        }
+
         private const int HistoryPageCapacity = 10;
         private const int SitemapPageCapacity = 25;
 

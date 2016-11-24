@@ -8,7 +8,7 @@ namespace Data
     {
         static SpeedTestContext()
         {
-            Database.SetInitializer(new SpeedTestContextInitializer());
+            //Database.SetInitializer(new SpeedTestContextInitializer());
         }
 
         public SpeedTestContext() : base("SpeedTestContext")

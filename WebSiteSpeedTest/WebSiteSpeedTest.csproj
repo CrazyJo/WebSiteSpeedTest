@@ -217,6 +217,7 @@
     <Compile Include="Infrastructure\JsonNetResult.cs" />
     <Compile Include="Infrastructure\RenderHelper.cs" />
     <Compile Include="Infrastructure\SignalrWorker.cs" />
+    <Compile Include="Infrastructure\WebTool.cs" />
     <Compile Include="Models\HistoryPagerViewModel.cs" />
     <Compile Include="Models\HistoryPageViewModel.cs" />
     <Compile Include="Models\MeasurementResultViewModel.cs" />

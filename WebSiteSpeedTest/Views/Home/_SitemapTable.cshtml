@@ -4,10 +4,7 @@
 @foreach (var sRow in Model)
 {
     <div class="sitemap-row row">
-        <div class="col-md-1">
-            @sRow.Id
-        </div>
-        <div class="col-md-8">
+        <div class="col-md-9">
             <a target="_blank" href=@sRow.Url>@sRow.Url</a>
         </div>
         <div class="col-md-3">

@@ -48,7 +48,7 @@ namespace UtilitiesPackage
 
             _displayer.Display(historyRow);
             historyRow.Id = _guid;
-            historyRow.Date = DateTime.Now;
+            historyRow.Date = DateTime.UtcNow;
 
             var loc = await ParseSitemap(url);
             //await loc.Take(1000).ForEachAsync(10, TestAndDisplay);

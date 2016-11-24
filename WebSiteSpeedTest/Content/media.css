@@ -1,4 +1,21 @@
-﻿.controls {
+﻿/*Modal window*/
+.history-row {
+  display: flex;
+  align-items: flex-start;
+}
+.history-row .link-cont {
+  padding-left: 15px;
+}
+.history-row .res-cont {
+  flex-shrink: 0;
+  width: 150px;
+  margin-left: auto;
+  padding-left: 15px;
+}
+.history-row .res-cont > span:first-child {
+  padding-right: 15px;
+}
+.controls {
   margin: 25px 0;
   /*& input[type=text], & button {
         height: 33.5px;
@@ -118,7 +135,21 @@
 }
 .sitemap-row {
   margin: 5px 0;
+  display: flex;
+  align-items: flex-start;
   font-size: 12px !important;
+}
+.sitemap-row .link-cont {
+  padding-left: 15px;
+}
+.sitemap-row .res-cont {
+  flex-shrink: 0;
+  width: 150px;
+  margin-left: auto;
+  padding-left: 15px;
+}
+.sitemap-row .res-cont > span:first-child {
+  padding-right: 15px;
 }
 .sitemap-row div {
   overflow: hidden;

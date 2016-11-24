@@ -9,7 +9,7 @@ namespace Data
     {
         protected override void Seed(SpeedTestContext context)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var id = Guid.NewGuid().ToString();
 
             var t = new HistoryRow

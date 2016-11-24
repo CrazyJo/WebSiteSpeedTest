@@ -9,6 +9,29 @@
 @warn-color: spin(@base-color, @distance * 2);
 @success-color: spin(@base-color, @distance * -2);
 
+/*Modal window*/
+@history-row-item-spacing: 15px;
+
+.history-row {
+    display: flex;
+    align-items: flex-start;
+
+    & .link-cont{
+        padding-left: @history-row-item-spacing;
+    }
+
+    & .res-cont {
+        flex-shrink: 0;
+        width: 150px;
+        margin-left: auto;
+        padding-left: @history-row-item-spacing;
+
+        & > span:first-child {
+            padding-right: @history-row-item-spacing;
+        }
+    }
+}
+
 .controls {
     margin: 25px 0;
     /*& input[type=text], & button {

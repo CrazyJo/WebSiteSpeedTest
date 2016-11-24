@@ -12,12 +12,11 @@ $(document)
     {
         let inputUrlErorrs = $("#inputUrlErorrs");
         let startBtnWaiter = $("#startTestWaiter");
-        startBtnWaiter.hide();
         let stBtnDefText = $("#startTestDefaultText");
+        startBtnWaiter.hide();
         let startBtn = $("#startTestBtn");
-        let testTrovider = startBtn.attr('data-url');
+        let testTroviderUrl = startBtn.attr('data-url');
         let inputUrl = $("#input_url");
-
         let modalWaiter = $("#modalWaiter");
         modalWaiter.hide();
 
@@ -47,7 +46,7 @@ $(document)
 
                     $.ajax({
                         type: "POST",
-                        url: testTrovider,
+                        url: testTroviderUrl,
                         data: {
                             url: value,
                             connectionId: notifier.connectionId
