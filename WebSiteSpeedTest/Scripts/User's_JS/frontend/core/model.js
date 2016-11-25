@@ -9,7 +9,7 @@ var MeasurementsViewModel = (function () {
         this.results.unshift(first);
     };
     MeasurementsViewModel.prototype.sortModel = function () {
-        this.results.sort(function (a, b) { return a.mintime - b.mintime; });
+        this.results.sort(function (a, b) { return b.mintime - a.mintime; });
     };
     MeasurementsViewModel.prototype.push = function (value) {
         this.results.push(value);

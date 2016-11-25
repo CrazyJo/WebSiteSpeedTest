@@ -51,7 +51,6 @@ namespace UtilitiesPackage
             historyRow.Date = DateTime.UtcNow;
 
             var loc = await ParseSitemap(url);
-            //await loc.Take(1000).ForEachAsync(10, TestAndDisplay);
             if (loc.Any())
                 await loc.Take(99).ForEach(TestAndDisplay);
 

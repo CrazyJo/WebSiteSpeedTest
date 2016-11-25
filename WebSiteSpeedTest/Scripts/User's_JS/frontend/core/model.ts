@@ -16,7 +16,7 @@
 
     sortModel()
     {
-        this.results.sort((a, b) => a.mintime - b.mintime);
+        this.results.sort((a, b) => b.mintime - a.mintime);
     }
 
     push(value: MeasurementResult)
