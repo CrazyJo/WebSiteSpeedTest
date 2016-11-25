@@ -90,3 +90,30 @@ export class Pager
         }
     }
 }
+
+export class Preloader
+{
+    private preloader;
+
+    constructor(preloaderId: string|Element)
+    {
+        this.preloader = $(preloaderId);
+    }
+
+    hide()
+    {
+        this.preloader.hide();
+    }
+    show()
+    {
+        this.preloader.show();
+    }
+}
+
+export class FormGroup {
+    messagebox;
+    submitBtn;
+    preloader: Preloader;
+    inputField;
+
+}

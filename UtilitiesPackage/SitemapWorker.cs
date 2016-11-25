@@ -81,17 +81,30 @@ namespace UtilitiesPackage
             var tempDoc = new XmlDocument();
             var extension = uri.GetExtension();
 
-            switch (extension)
+            try
             {
-                case ".xml":
-                    tempDoc.Load(responseStream);
-                    break;
-                case ".gz":
-                    using (var zip = new GZipStream(responseStream, CompressionMode.Decompress))
-                        tempDoc.Load(zip);
-                    break;
-                default:
-                    throw new InvalidOperationException("Сan not load a document with this extension");
+                switch (extension)
+                {
+                    case ".xml":
+                        {
+                            tempDoc.Load(responseStream);
+                            break;
+                        }
+
+                    case ".gz":
+                        {
+                            using (var zip = new GZipStream(responseStream, CompressionMode.Decompress))
+                                tempDoc.Load(zip);
+                            break;
+                        }
+                    default:
+                        return null;
+                        //throw new InvalidOperationException("Сan not load a document with this extension");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
 
             return tempDoc;

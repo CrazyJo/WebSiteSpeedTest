@@ -86,4 +86,23 @@ var Pager = (function () {
     return Pager;
 }());
 exports.Pager = Pager;
+var Preloader = (function () {
+    function Preloader(preloaderId) {
+        this.preloader = $(preloaderId);
+    }
+    Preloader.prototype.hide = function () {
+        this.preloader.hide();
+    };
+    Preloader.prototype.show = function () {
+        this.preloader.show();
+    };
+    return Preloader;
+}());
+exports.Preloader = Preloader;
+var FormGroup = (function () {
+    function FormGroup() {
+    }
+    return FormGroup;
+}());
+exports.FormGroup = FormGroup;
 //# sourceMappingURL=view.js.map

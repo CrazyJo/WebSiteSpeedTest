@@ -9,10 +9,10 @@ $(document)
     .ready(function () {
     var inputUrlErorrs = $("#inputUrlErorrs");
     var startBtnWaiter = $("#startTestWaiter");
-    startBtnWaiter.hide();
     var stBtnDefText = $("#startTestDefaultText");
+    startBtnWaiter.hide();
     var startBtn = $("#startTestBtn");
-    var testTrovider = startBtn.attr('data-url');
+    var testTroviderUrl = startBtn.attr('data-url');
     var inputUrl = $("#input_url");
     var modalWaiter = $("#modalWaiter");
     modalWaiter.hide();
@@ -34,7 +34,7 @@ $(document)
             displayer.clean();
             $.ajax({
                 type: "POST",
-                url: testTrovider,
+                url: testTroviderUrl,
                 data: {
                     url: value,
                     connectionId: notifier.connectionId
