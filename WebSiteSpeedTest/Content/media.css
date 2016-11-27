@@ -2,6 +2,13 @@
 .history-row {
   display: flex;
   align-items: flex-start;
+  font-size: 12px !important;
+}
+.history-row div {
+  overflow: hidden;
+}
+.history-row a {
+  color: black;
 }
 .history-row .link-cont {
   padding-left: 15px;
@@ -15,6 +22,38 @@
 .history-row .res-cont > span:first-child {
   padding-right: 15px;
 }
+.sitemap-row {
+  margin: 5px 0;
+  display: flex;
+  align-items: flex-start;
+  font-size: 12px !important;
+}
+.sitemap-row div {
+  overflow: hidden;
+}
+.sitemap-row a {
+  color: black;
+}
+.sitemap-row .link-cont {
+  padding-left: 15px;
+}
+.sitemap-row .res-cont {
+  flex-shrink: 0;
+  width: 150px;
+  margin-left: auto;
+  padding-left: 15px;
+}
+.sitemap-row .res-cont > span:first-child {
+  padding-right: 15px;
+}
+.day-header {
+  font-size: 14px;
+  margin-left: 15px;
+}
+.right-offset {
+  margin-right: 15px;
+}
+/*Model window end*/
 .controls {
   margin: 25px 0;
   /*& input[type=text], & button {
@@ -123,46 +162,6 @@
 .field-error {
   box-shadow: 0 0 5px #db3498;
   border: 1px solid #db3498;
-}
-.history-row {
-  font-size: 12px !important;
-}
-.history-row div {
-  overflow: hidden;
-}
-.history-row a {
-  color: black;
-}
-.sitemap-row {
-  margin: 5px 0;
-  display: flex;
-  align-items: flex-start;
-  font-size: 12px !important;
-}
-.sitemap-row .link-cont {
-  padding-left: 15px;
-}
-.sitemap-row .res-cont {
-  flex-shrink: 0;
-  width: 150px;
-  margin-left: auto;
-  padding-left: 15px;
-}
-.sitemap-row .res-cont > span:first-child {
-  padding-right: 15px;
-}
-.sitemap-row div {
-  overflow: hidden;
-}
-.sitemap-row a {
-  color: black;
-}
-.day-header {
-  font-size: 14px;
-  margin-left: 15px;
-}
-.right-offset {
-  margin-right: 15px;
 }
 @media screen and (min-width: 992px) {
   #historyBtn {

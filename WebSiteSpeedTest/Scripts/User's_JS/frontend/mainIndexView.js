@@ -24,13 +24,20 @@ $(document)
     startBtn
         .click(function (e) {
         e.preventDefault();
+        inputUrlErorrs.html("");
+        inputUrl.removeClass("field-error");
         var value = inputUrl.val();
-        var isValueValid = value.match(/^(ftp|http|https):\/\/[^ "]+$/);
+        var isValueValid = false;
+        if (/^(ftp|http|https):\/\/[^ "]+$/.test(value)) {
+            isValueValid = true;
+        }
+        else if (/^[a-zA-Z0-9][a-zA-Z0-9-_]{0,61}[a-zA-Z0-9]{0,1}\.([a-zA-Z]{1,6}|[a-zA-Z0-9-]{1,30}\.[a-zA-Z]{2,3})$/.test(value)) {
+            value = "http://" + value;
+            isValueValid = true;
+        }
         if (isValueValid) {
-            inputUrl.removeClass("field-error");
             startBtnWaiter.show();
             stBtnDefText.hide();
-            inputUrlErorrs.html("");
             displayer.clean();
             $.ajax({
                 type: "POST",

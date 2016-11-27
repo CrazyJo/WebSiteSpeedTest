@@ -1,7 +1,7 @@
 ﻿const NODE_ENV = process.env.NODE_ENV || "production";
 const webpack = require("webpack");
 
-console.log(NODE_ENV);
+console.log(NODE_ENV === "dev" ? "Dev Mode" : "Production");
 
 module.exports = {
     context: __dirname + "/Scripts/User's_JS/frontend",

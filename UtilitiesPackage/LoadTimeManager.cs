@@ -20,11 +20,13 @@ namespace UtilitiesPackage
         private readonly IMeasurementResultDisplayer _displayer;
         private readonly IStorage _storage;
         private string _guid;
+        public int LoadCapacity { get; set; }
 
         public LoadTimeManager(IMeasurementResultDisplayer displayer, IStorage storage)
         {
             _displayer = displayer;
             _storage = storage;
+            LoadCapacity = 99;
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace UtilitiesPackage
             {
                 historyRow = await LoadSeveralTimes<HistoryRow>(url);
             }
-            catch (InvalidOperationException)
+            catch (HttpRequestException)
             {
                 throw new Exception("Invalid url");
             }
@@ -52,13 +54,13 @@ namespace UtilitiesPackage
 
             var loc = await ParseSitemap(url);
             if (loc.Any())
-                await loc.Take(99).ForEach(TestAndDisplay);
+                await loc.Take(LoadCapacity).ForEach(TestAndDisplay);
 
             try
             {
                 _storage.Save(new ResultsPack(historyRow, _results));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new Exception("db save Exception");
             }
