@@ -5,8 +5,8 @@
         public CrawlConfiguration()
         {
             MaxConcurrentThreads = 10;
-            MaxPagesToCrawl = 5;
-            MaxCrawlDepth = 1000;
+            MaxPagesToCrawl = 500;
+            MaxCrawlDepth = 500;
         }
 
         public bool CrawlStaticFiles { get; set; }
