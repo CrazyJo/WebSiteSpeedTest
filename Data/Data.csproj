@@ -56,6 +56,7 @@
     <Compile Include="Repo.cs" />
     <Compile Include="SpeedTestContext.cs" />
     <Compile Include="SpeedTestContextInitializer.cs" />
+    <Compile Include="ThreadSafeRepo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

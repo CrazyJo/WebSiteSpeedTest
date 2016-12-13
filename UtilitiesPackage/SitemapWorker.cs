@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Core.Collection;
+using Extensions.Parallelism;
+using Extensions.Regex;
 
 namespace UtilitiesPackage
 {
@@ -22,50 +24,77 @@ namespace UtilitiesPackage
             Volatile.Read(ref FoundUrl)?.Invoke(url);
         }
 
+        /// <summary>
+        /// Get sitemap links from robots.txt
+        /// </summary>
+        public static async Task<IEnumerable<string>> GetFromRobots(string domain)
+        {
+            var response = await LoadPage(domain + "/robots.txt").ConfigureAwait(false);
+            if (response != null)
+            {
+                var content = await response.ReadAsStringAsync().ConfigureAwait(false);
+                return content.GetSitemapUrls();
+            }
+            return new List<string>();
+        }
+
         public static async Task<XmlDocument> FindeFirstSitemapDoc(string url)
         {
-            XmlDocument results = null;
+            XmlDocument results;
             var domain = url.GetDomain();
-
             var sitemapXml = await LoadDoc(domain + "/sitemap.xml").ConfigureAwait(false);
             if (sitemapXml != null)
+            {
                 results = sitemapXml;
+            }
             else
             {
-                var response = await LoadPage(domain + "/robots.txt").ConfigureAwait(false);
-                if (response != null)
-                {
-                    var content = await response.ReadAsStringAsync().ConfigureAwait(false);
-                    var sitemapUrls = content.GetSitemapUrls();
-                    if (!sitemapUrls.Any()) return null;
-                    var path = sitemapUrls.First();
-                    results = await LoadDoc(path).ConfigureAwait(false);
-                }
+                var sitemapUrls = await GetFromRobots(domain);
+                var urls = sitemapUrls as IList<string> ?? sitemapUrls.ToList();
+                if (!urls.Any()) return null;
+                var path = urls.First();
+                results = await LoadDoc(path).ConfigureAwait(false);
             }
 
             return results;
         }
 
-        public static async Task<IEnumerable<XmlDocument>> FindSitemap(string url)
+        public static async Task<IEnumerable<XmlDocument>> FindSitemap(string url, int numberOfDoc = int.MaxValue, string specificUrl = null)
         {
             var results = new ConcurrentQueue<XmlDocument>();
             var domain = url.GetDomain();
 
             var sitemapXml = await LoadDoc(domain + "/sitemap.xml").ConfigureAwait(false);
             if (sitemapXml != null)
+            {
                 results.Enqueue(sitemapXml);
+            }
             else
             {
-                var response = await LoadPage(domain + "/robots.txt").ConfigureAwait(false);
-                if (response != null)
+                var sitemapLinks = await GetFromRobots(domain);
+                if (specificUrl == null)
                 {
-                    var content = await response.ReadAsStringAsync().ConfigureAwait(false);
-                    await content.GetSitemapUrls().ForEach(async uri =>
+                    var temp = sitemapLinks.Take(numberOfDoc);
+                    await temp.ForEach(async uri =>
                     {
                         var doc = await LoadDoc(uri);
                         if (doc != null)
                             results.Enqueue(doc);
                     }).ConfigureAwait(false);
+                }
+                else
+                {
+                    var temp = sitemapLinks.First(link => link.Contains(specificUrl));
+                    if (temp != null)
+                    {
+                        var doc = await LoadDoc(temp);
+                        if (doc != null)
+                            results.Enqueue(doc);
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException("Current sitemap url doesn't contain this specific url.");
+                    }
                 }
             }
 

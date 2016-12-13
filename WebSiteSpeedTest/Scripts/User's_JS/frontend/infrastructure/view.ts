@@ -48,7 +48,7 @@ export class PagerBtn
         return this.element.attr("href");
     }
 
-    get rowId():string
+    get rowId(): string
     {
         return this.element.attr("data-history-row-id");
     }

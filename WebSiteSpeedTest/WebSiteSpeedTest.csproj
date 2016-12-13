@@ -212,8 +212,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\NotificationHub.cs" />
+    <Compile Include="Infrastructure\ClientSideSender.cs" />
     <Compile Include="Infrastructure\Enums.cs" />
     <Compile Include="Infrastructure\Extensions\ToViewModelExtensions.cs" />
+    <Compile Include="Infrastructure\Interfaces.cs" />
     <Compile Include="Infrastructure\JsonNetResult.cs" />
     <Compile Include="Infrastructure\RenderHelper.cs" />
     <Compile Include="Infrastructure\SignalrWorker.cs" />

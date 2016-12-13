@@ -35,4 +35,10 @@ var HistoryPager = (function () {
     return HistoryPager;
 }());
 exports.HistoryPager = HistoryPager;
+var TestResult = (function () {
+    function TestResult() {
+    }
+    return TestResult;
+}());
+exports.TestResult = TestResult;
 //# sourceMappingURL=model.js.map

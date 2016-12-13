@@ -61,11 +61,11 @@ $(document)
                             url: value,
                             connectionId: notifier.connectionId
                         },
-                        success: (v) =>
+                        success: (v: Model.TestResult) =>
                         {
-                            if (v)
+                            if (!v.TestCompletedSuccessfully)
                             {
-                                inputUrlErorrs.html(v);
+                                inputUrlErorrs.html(v.Exception.Message);
                                 startBtnWaiter.hide();
                                 stBtnDefText.show();
                                 inputUrl.addClass("field-error");

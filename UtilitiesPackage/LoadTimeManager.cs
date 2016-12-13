@@ -1,136 +1,120 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
-using System.Xml;
-using Core.Model;
-using Core;
+﻿//using System;
+//using System.Collections.Concurrent;
+//using System.Collections.Generic;
+//using System.Diagnostics;
+//using System.Linq;
+//using System.Net.Http;
+//using System.Threading.Tasks;
+//using System.Threading.Tasks.Dataflow;
+//using System.Xml;
+//using Core.Model;
+//using Core;
+//using Core.Collection;
+//using Extensions.Parallelism;
+//using static UtilitiesPackage.LoadStopwatch;
 
 
-namespace UtilitiesPackage
-{
-    public class LoadTimeManager : IDisposable
-    {
-        private readonly HttpClient _httpClient = new HttpClient();
-        private readonly ConcurrentBag<SitemapRow> _results = new ConcurrentBag<SitemapRow>();
-        private readonly IMeasurementResultDisplayer _displayer;
-        private readonly IStorage _storage;
-        private string _guid;
-        public int LoadCapacity { get; set; }
+//namespace UtilitiesPackage
+//{
+//    public class LoadTimeManager
+//    {
+//        private readonly ConcurrentBag<SitemapRow> _results = new ConcurrentBag<SitemapRow>();
+//        private string _guid;
+//        public LoadTimeManagerOptions Options { get; set; }
 
-        public LoadTimeManager(IMeasurementResultDisplayer displayer, IStorage storage)
-        {
-            _displayer = displayer;
-            _storage = storage;
-            LoadCapacity = 99;
-        }
+//        public LoadTimeManager(LoadTimeManagerOptions options)
+//        {
+//            Options = options;
+//        }
 
-        /// <summary>
-        /// It measures the load time of the site and all its references in the sitemap.xml
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public async Task MeasureAsync(string url)
-        {
-            HistoryRow historyRow;
-            _guid = Guid.NewGuid().ToString();
+//        /// <summary>
+//        /// It measures the load time of the site and all its references in the sitemap.xml
+//        /// </summary>
+//        /// <param name="url"></param>
+//        /// <returns></returns>
+//        public async Task MeasureAsync(string url)
+//        {
+//            HistoryRow historyRow;
+//            _guid = Guid.NewGuid().ToString();
 
-            try
-            {
-                historyRow = await LoadSeveralTimes<HistoryRow>(url);
-            }
-            catch (HttpRequestException)
-            {
-                throw new Exception("Invalid url");
-            }
+//            try
+//            {
+//                historyRow = await LoadSeveralTimes<HistoryRow>(url);
+//            }
+//            catch (HttpRequestException)
+//            {
+//                throw new Exception("Invalid url");
+//            }
 
-            _displayer.Display(historyRow);
-            historyRow.Id = _guid;
-            historyRow.Date = DateTime.UtcNow;
+//            Options.Displayer.Display(historyRow);
+//            historyRow.Id = _guid;
+//            historyRow.Date = DateTime.UtcNow;
 
-            var loc = await ParseSitemap(url);
-            if (loc.Any())
-                await loc.Take(LoadCapacity).ForEach(TestAndDisplay);
+//            var loc = await ParseSitemap(url);
+//            if (loc.Any())
+//            {
+//                //await loc.Take(LoadCapacity).ForEach(TestAndDisplay);
+//            }
 
-            try
-            {
-                _storage.Save(new ResultsPack(historyRow, _results));
-            }
-            catch (Exception)
-            {
-                throw new Exception("db save Exception");
-            }
-        }
+//            try
+//            {
+//                //_storage.Save(new ResultsPack(historyRow, _results));
+//            }
+//            catch (Exception)
+//            {
+//                throw new Exception("db save Exception");
+//            }
+//        }
 
-        async Task TestAndDisplay(string url)
-        {
-            SitemapRow item;
-            try
-            {
-                item = await LoadSeveralTimes<SitemapRow>(url);
-            }
-            catch (Exception)
-            {
-                return;
-            }
-            _displayer.Display(item);
-            item.HistoryRowId = _guid;
-            _results.Add(item);
-        }
+//        async Task TestAndDisplay(string url)
+//        {
+//            SitemapRow item;
+//            try
+//            {
+//                item = await LoadSeveralTimes<SitemapRow>(url);
+//            }
+//            catch (Exception)
+//            {
+//                return;
+//            }
+//            //_displayer.Display(item);
+//            item.HistoryRowId = _guid;
+//            _results.Add(item);
+//        }
 
-        public virtual async Task<TResult> LoadSeveralTimes<TResult>(string url, int timesCount = 3) where TResult : MeasurementResult, new()
-        {
-            var tempQueue = new ConcurrentQueue<TimeSpan>();
+//        async Task<IEnumerable<string>> ParseSitemap(string url)
+//        {
+//            if (Options.ParseAll)
+//            {
+//                return await ParsePartSitemap(url, int.MaxValue);
+//            }
+//            if (Options.NumberOfFiles == 1)
+//            {
+//                return await ParseFirstSitemapDoc(url);
+//            }
+//            return await ParsePartSitemap(url, Options.NumberOfFiles);
+//        }
 
-            await ParallelExtensions.ForAsync(0, timesCount, async i =>
-            {
-                tempQueue.Enqueue(await LoadTimeMeasuringAsync(url));
-            });
+//        async Task<IEnumerable<string>> ParseFirstSitemapDoc(string url)
+//        {
+//            var xDoc = await SitemapWorker.FindeFirstSitemapDoc(url);
+//            if (xDoc != null)
+//                return await SitemapWorker.ParseSitemapFile(xDoc);
+//            return new List<string>();
+//        }
 
-            //await ParallelDfExtensions.For(0, timesCount, async i =>
-            //{
-            //    tempQueue.Enqueue(await LoadTimeMeasuringAsync(url).ConfigureAwait(false));
-            //});
-
-            var orderedQ = tempQueue.OrderBy(e => e);
-            var result = new TResult
-            {
-                Url = url,
-                MinTime = orderedQ.First(),
-                MaxTime = orderedQ.Last()
-            };
-
-            return result;
-        }
-
-        public virtual async Task<TimeSpan> LoadTimeMeasuringAsync(string url)
-        {
-            var sw = new Stopwatch();
-            var httpClient = new HttpClient();
-            sw.Start();
-            var t = await httpClient.GetAsync(url);
-            sw.Stop();
-            var time = sw.Elapsed;
-            httpClient.Dispose();
-
-            return time;
-        }
-
-        public virtual async Task<IEnumerable<string>> ParseSitemap(string url)
-        {
-            var xDoc = await SitemapWorker.FindeFirstSitemapDoc(url);
-            if (xDoc != null)
-                return await SitemapWorker.ParseSitemapFile(xDoc);
-            return new List<string>();
-        }
-
-        public void Dispose()
-        {
-            _httpClient.Dispose();
-        }
-    }
-}
+//        async Task<IEnumerable<string>> ParsePartSitemap(string url, int numberOfFiles)
+//        {
+//            var xDocs = await SitemapWorker.FindSitemap(url);
+//            ConcurrentBag<string> temp = new ConcurrentBag<string>();
+//            if (xDocs != null)
+//            {
+//                await xDocs.ForEach(async doc =>
+//                {
+//                    temp.AddRange(await SitemapWorker.ParseSitemapFile(doc));
+//                });
+//            }
+//            return temp;
+//        }
+//    }
+//}

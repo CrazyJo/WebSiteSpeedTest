@@ -1,0 +1,33 @@
+﻿using System.Collections.Concurrent;
+using CrawlerBot.Shell;
+
+namespace CrawlerBot.Core
+{
+    class FifoPagesToCrawlStorage : IPagesToCrawlRepository
+    {
+        ConcurrentQueue<PageToCrawl> _urlQueue = new ConcurrentQueue<PageToCrawl>();
+
+        public void Add(PageToCrawl page)
+        {
+            _urlQueue.Enqueue(page);
+        }
+
+        public PageToCrawl GetNext()
+        {
+            PageToCrawl pageToCrawl;
+            _urlQueue.TryDequeue(out pageToCrawl);
+
+            return pageToCrawl;
+        }
+
+        public void Clear()
+        {
+            _urlQueue = new ConcurrentQueue<PageToCrawl>();
+        }
+
+        public int Count()
+        {
+            return _urlQueue.Count;
+        }
+    }
+}

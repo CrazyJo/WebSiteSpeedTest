@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Collection;
 using Core.Model;
 using Core;
@@ -17,30 +18,6 @@ namespace Data
             IDbContextFactory db = new DbContextFactory();
             _historyRepo = new Repo<HistoryRow>(db);
             _smRepo = new Repo<SitemapRow>(db);
-        }
-        public void Save<T>(T data)
-        {
-            var dataPack = data as ResultsPack;
-            if (dataPack != null)
-            {
-                Save(dataPack.HistoryRow, dataPack.SitemapRows);
-            }
-        }
-
-        public void Save(HistoryRow historyRow, IEnumerable<SitemapRow> sitemapRows)
-        {
-            SaveHistory(historyRow);
-            SaveSitemap(sitemapRows);
-        }
-
-        public void SaveHistory(HistoryRow historyRow)
-        {
-            _historyRepo.Insert(historyRow);
-        }
-
-        public void SaveSitemap(IEnumerable<SitemapRow> sitemapRows)
-        {
-            _smRepo.AddRange(sitemapRows);
         }
 
         public IQueryable<HistoryRow> GetHistory()
@@ -67,6 +44,41 @@ namespace Data
         {
             _historyRepo.Dispose();
             _smRepo.Dispose();
+        }
+
+        public void Add(HistoryRow row)
+        {
+            _historyRepo.Add(row);
+        }
+        public void Add(SitemapRow row)
+        {
+            _smRepo.Add(row);
+        }
+
+        public void Add<T>(T obj)
+        {
+            SitemapRow sr = obj as SitemapRow;
+            if (sr != null)
+            {
+                Add(sr);
+            }
+            else
+            {
+                HistoryRow hr = obj as HistoryRow;
+                if (hr != null)
+                {
+                    Add(hr);
+                }
+                else
+                {
+                    throw new ArgumentException("Parameter type must be either HistoryRow or SitemapRow.", nameof(obj));
+                }
+            }
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _historyRepo.SaveAsync().ConfigureAwait(false) + await _smRepo.SaveAsync().ConfigureAwait(false);
         }
     }
 }

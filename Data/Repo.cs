@@ -4,11 +4,12 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Core.Repository;
 
 namespace Data
 {
-    public class Repo<T> : IRepo<T> where T : class , new()
+    public class Repo<T> : IRepo<T> where T : class, new()
     {
 
         protected readonly DbContext DbContext;
@@ -34,13 +35,17 @@ namespace Data
             return DbContext.Set<T>();
         }
 
-        public void AddRange(IEnumerable<T> entities)
+        public virtual void Add(T obj)
         {
-            DbContext.Set<T>().AddRange(entities);
-            DbContext.SaveChanges();
+            DbContext.Set<T>().Add(obj);
         }
 
-        public void Insert(T obj)
+        public virtual void AddRange(IEnumerable<T> entities)
+        {
+            DbContext.Set<T>().AddRange(entities);
+        }
+
+        public virtual void Insert(T obj)
         {
             DbContext.Set<T>().Add(obj);
             DbContext.SaveChanges();
@@ -51,13 +56,18 @@ namespace Data
             DbContext.SaveChanges();
         }
 
-        public void Update(T obj)
+        public async Task<int> SaveAsync()
+        {
+            return await DbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public virtual void Update(T obj)
         {
             DbContext.Set<T>().AddOrUpdate(obj);
             DbContext.SaveChanges();
         }
 
-        public void Update(int id, T obj)
+        public virtual void Update(int id, T obj)
         {
             DbContext.Set<T>().AddOrUpdate(obj);
             DbContext.SaveChanges();

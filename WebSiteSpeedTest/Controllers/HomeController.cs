@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using WebSiteSpeedTest.Infrastructure;
 using Core.Model;
 using Data;
-using System.Web;
 using WebSiteSpeedTest.Models;
 using WebSiteSpeedTest.Infrastructure.Extensions;
 using UtilitiesPackage;
-using WebSiteSpeedTest.Hubs;
+using UtilitiesPackage.WebtesterPack;
 
 namespace WebSiteSpeedTest.Controllers
 {
@@ -20,10 +15,6 @@ namespace WebSiteSpeedTest.Controllers
     {
         public HomeController()
         {
-            //CultureInfo ci = new CultureInfo("en-US");
-            //Thread.CurrentThread.CurrentCulture = ci;
-            //Thread.CurrentThread.CurrentUICulture = ci;
-
             WebTool.SetUserLocale();
         }
 
@@ -40,16 +31,9 @@ namespace WebSiteSpeedTest.Controllers
         [HttpPost]
         public async Task<ActionResult> Compute(string url, string connectionId)
         {
-            var ltManager = new LoadTimeManager(new SignalrWorker<NotificationHub>(connectionId), _committer);
-            try
-            {
-                await ltManager.MeasureAsync(url);
-            }
-            catch (Exception e)
-            {
-                return Content(e.Message);
-            }
-            return new EmptyResult();
+            var tester = new WPTest(new ClientSideSender(connectionId), _committer);
+            WebTestResult testRes = await tester.Test(url);
+            return new JsonNetResult(testRes);
         }
 
         public ActionResult History()

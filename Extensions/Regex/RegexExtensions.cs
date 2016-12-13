@@ -1,22 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace UtilitiesPackage
+namespace Extensions.Regex
 {
     public static class RegexExtensions
     {
         public static string GetExtension(this string value)
         {
-            var r = new Regex(@"\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$");
+            var r = new System.Text.RegularExpressions.Regex(@"\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$");
             return r.Match(value).Value;
 
         }
 
+        public static bool BeginWith(this string source, string value)
+        {
+            var r = new System.Text.RegularExpressions.Regex($"^{value}");
+            return r.IsMatch(source);
+        }
+
         public static IEnumerable<string> GetSitemapUrls(this string content)
         {
+            if (content == null) throw new ArgumentNullException(nameof(content));
+
             var result = new List<string>();
 
-            Regex r = new Regex(@"(?<=^sitemap.*)(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
+            System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"(?<=^sitemap.*)(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?",
                 RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
             foreach (Match match in r.Matches(content))
@@ -29,7 +38,7 @@ namespace UtilitiesPackage
 
         public static string GetDomain(this string url)
         {
-            Regex r = new Regex(@"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)");
+            System.Text.RegularExpressions.Regex r = new System.Text.RegularExpressions.Regex(@"^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)");
             return r.Match(url).Value;
         }
 

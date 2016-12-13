@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
-namespace UtilitiesPackage
+namespace Extensions.Parallelism
 {
     public static class ParallelDfExtensions
     {

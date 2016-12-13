@@ -43,3 +43,11 @@ export class HistoryPager
     previousStartIndex: number;
     nextStartIndex: number;
 }
+
+export class TestResult {
+    TestCompletedSuccessfully: boolean;
+    Exception: any;
+    CrawledPagesCount: number;
+    TestedPagesCount: number;
+    Elapsed: any;
+}

@@ -1,23 +1,32 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace UtilitiesPackage
+namespace Extensions.Parallelism
 {
     public static class ParallelExtensions
     {
-        public static Task ForAsync(int fromInclusive, int toExclusive, Func<int, Task> body)
+        public static Task ForAsync(int fromInclusive, int toExclusive, Func<int, Task> body, CancellationToken token)
         {
+            //return Task.Run(() =>
+            //{
+            //    for (; fromInclusive < toExclusive; fromInclusive++)
+            //    {
+            //        var i = fromInclusive;
+            //        new Task(async () => await body(i), token, TaskCreationOptions.AttachedToParent).Start();
+            //    }
+            //}, token);
+
             var tasks = new List<Task>();
 
             for (; fromInclusive < toExclusive; fromInclusive++)
             {
                 var i = fromInclusive;
-                tasks.Add(Task.Run(async () => await body(i)));
+                tasks.Add(Task.Run(async () => await body(i), token));
             }
             return Task.WhenAll(tasks);
         }
@@ -43,10 +52,10 @@ namespace UtilitiesPackage
                     using (partition)
                         while (partition.MoveNext())
                             await body(partition.Current);
-                            //.ContinueWith(t =>
-                            //{
-                            //    //observe exceptions
-                            //});
+                    //.ContinueWith(t =>
+                    //{
+                    //    //observe exceptions
+                    //});
                 }));
         }
 

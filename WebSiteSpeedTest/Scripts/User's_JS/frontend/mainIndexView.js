@@ -47,8 +47,8 @@ $(document)
                     connectionId: notifier.connectionId
                 },
                 success: function (v) {
-                    if (v) {
-                        inputUrlErorrs.html(v);
+                    if (!v.TestCompletedSuccessfully) {
+                        inputUrlErorrs.html(v.Exception.Message);
                         startBtnWaiter.hide();
                         stBtnDefText.show();
                         inputUrl.addClass("field-error");

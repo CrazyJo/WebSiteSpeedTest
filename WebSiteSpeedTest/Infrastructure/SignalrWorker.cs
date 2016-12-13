@@ -1,11 +1,8 @@
-﻿using Core;
-using Core.Model;
-using Microsoft.AspNet.SignalR;
-using WebSiteSpeedTest.Infrastructure.Extensions;
+﻿using Microsoft.AspNet.SignalR;
 
 namespace WebSiteSpeedTest.Infrastructure
 {
-    public class SignalrWorker<THub> : IMeasurementResultDisplayer where THub : Hub
+    public class SignalrWorker<THub> : ISender where THub : Hub
     {
         private readonly IHubContext _hubContextcontext = GlobalHost.ConnectionManager.GetHubContext<THub>();
         private readonly string _connectionId;
@@ -15,9 +12,14 @@ namespace WebSiteSpeedTest.Infrastructure
             _connectionId = connectionId;
         }
 
-        public void Display(MeasurementResult message)
+        public void Send<T>(T message)
         {
-            _hubContextcontext.Clients.Client(_connectionId).displayMessage(message.ToViewModel());
+            Send(_connectionId, message);
+        }
+
+        public void Send<T>(string connectionId, T message)
+        {
+            _hubContextcontext.Clients.Client(connectionId).displayMessage(message);
         }
     }
 }
