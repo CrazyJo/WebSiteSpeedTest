@@ -1,1 +1,1 @@
-Program dynamically creates a sitemap and test each page load speed, while maintaining all the results in db.
+Program dynamically creates a sitemap and test the speed of each page load, all the results are stored in the db.
